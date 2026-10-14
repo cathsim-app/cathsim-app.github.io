@@ -18,7 +18,7 @@
   button.lit, button.on { background: linear-gradient(180deg, rgba(34,227,197,.8), rgba(34,227,197,.5)); border-color: rgba(120,240,220,.7); box-shadow: 0 0 16px rgba(34,227,197,.35); }
   button.orange { background: linear-gradient(180deg, rgba(255,154,46,.8), rgba(255,154,46,.5)); border-color: rgba(255,190,110,.6); } button.red { background: rgba(255,80,80,.6); }
   .brand { display: inline-flex; align-items: center; gap: 9px; font-size: 24px; font-weight: 800; }
-  .brand .mark { width: 34px; height: 34px; border-radius: 10px; position: relative; filter: drop-shadow(0 0 10px rgba(34,227,197,.45)); }
+  .brand .mark { width: 34px; height: 34px; border-radius: 10px; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,.35); overflow: hidden; }
   .brand .mark svg { width: 100%; height: 100%; display: block; }
   #connect { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; overflow: auto; }
   #app.viewer #stage { opacity: .45; }
@@ -53,8 +53,22 @@
   #vit { font: 600 12px "SF Mono", Menlo, monospace; color: rgba(255,255,255,.75); display: flex; gap: 14px; }
   #vit.warn { color: var(--orange); } #vit.red { color: #ff5a5a; }
   .ic { width: 1.05em; height: 1.05em; vertical-align: -.18em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  /* Verbindungsbildschirm im Stil der Startseite: ruhig, Systemschrift, blauer Knopf, kein Leuchten */
+  #connect { background: #000; -webkit-font-smoothing: antialiased; gap: 12px; }
+  #connect { justify-content: safe center; } #connect > * { flex-shrink: 0; }
+  #connect .brand { font: 600 22px -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.01em; gap: 10px; margin-bottom: 10px; }
+  #connect .brand .mark { width: 40px; height: 40px; border-radius: 23%; }
+  #connect input { width: 280px; height: 50px; padding: 0 16px; border: 1px solid transparent; border-radius: 12px; background: rgba(118,118,128,.24); font-size: 17px; letter-spacing: -.01em; user-select: text; -webkit-user-select: text; }
+  #connect input::placeholder { color: rgba(235,235,245,.38); }
+  #connect input:focus { outline: none; box-shadow: 0 0 0 4px rgba(10,132,255,.45); }
+  #connect input#code { height: 58px; font-size: 26px; letter-spacing: .3em; }
+  #connect #scanBox { width: 280px !important; height: 280px !important; border-radius: 20px !important; border-color: rgba(255,255,255,.08) !important; }
+  #connect #scanBox > div:not(#scanText) { border-color: rgba(255,255,255,.7) !important; }
+  #connect #camGo { white-space: nowrap; border: none; border-radius: 999px; background: rgba(118,118,128,.5); box-shadow: none; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  #connect #go { width: 280px !important; height: 50px; border: none; border-radius: 12px; background: #0a84ff; color: #fff; font-size: 17px; box-shadow: none; }
+  #connect #go:active { background: #0071e3; transform: scale(.99); }
 </style>
-<script>window.CATHSIM_BUILD="20261014214322"</script></head>
+<script>window.CATHSIM_BUILD="20261014221132"</script></head>
 <body>
 <div id="connect">
   <div class="brand"><span class="mark"></span>CathSim</div>
@@ -87,11 +101,11 @@
   <div class="row"><button id="bAsp">Aspirieren</button><button id="bDetach">Coil ablösen</button><button id="bCenter">Zentrieren</button></div>
   <div id="vit"><span>HF <span id="vHr">–</span></span><span>RR <span id="vRr">–</span></span><span>SpO₂ <span id="vSp">–</span></span></div>
 </div>
-<script src="icons.js?v=20261014214322"></script>
+<script src="icons.js?v=20261014221132"></script>
 <script src="vendor/mqtt.min.js"></script>
 <script src="vendor/jsQR.min.js"></script>
-<script src="config.js?v=20261014214322"></script>
-<script src="link.js?v=20261014214322"></script>
-<script src="controller.js?v=20261014214322"></script>
+<script src="config.js?v=20261014221132"></script>
+<script src="link.js?v=20261014221132"></script>
+<script src="controller.js?v=20261014221132"></script>
 </body>
 </html>
