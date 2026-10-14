@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CathSim Station</title>
+<link rel="stylesheet" href="style.css?v=20261014164442">
+<script>window.CATHSIM_BUILD="20261014164442"</script></head>
+<body>
+<div id="gate">
+<svg class="veins" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <g class="wall">
+    <path d="M 80 760 C 90 560 160 470 300 430 C 440 390 520 300 540 180 C 555 90 600 40 700 20"/>
+    <path d="M 540 180 C 600 200 680 260 760 330 C 830 390 900 420 1000 430"/>
+    <path d="M 300 430 C 360 470 420 560 440 700"/>
+    <path d="M 760 330 C 780 240 860 190 950 150 C 1020 120 1080 80 1130 20"/>
+    <path d="M 1000 430 C 1060 470 1110 540 1150 640"/>
+    <path d="M 540 180 C 500 140 470 90 430 40"/>
+    <path d="M 950 150 C 990 170 1040 210 1080 270"/>
+  </g>
+  <path class="v d0" pathLength="1000" d="M 540 180 C 555 90 600 40 700 20"/>
+  <path class="v d0" pathLength="1000" d="M 540 180 C 600 200 680 260 760 330 C 830 390 900 420 1000 430"/>
+  <path class="v d1" pathLength="1000" d="M 540 180 C 500 140 470 90 430 40"/>
+  <path class="v d1" pathLength="1000" d="M 760 330 C 780 240 860 190 950 150 C 1020 120 1080 80 1130 20"/>
+  <path class="v d2" pathLength="1000" d="M 1000 430 C 1060 470 1110 540 1150 640"/>
+  <path class="v d2" pathLength="1000" d="M 950 150 C 990 170 1040 210 1080 270"/>
+  <path class="cath" pathLength="1000" d="M 80 760 C 90 560 160 470 300 430 C 440 390 520 300 540 180"/>
+  <circle class="tip" r="5"/>
+</svg>
+<div class="noise"></div>
+<div class="box glass">
+  <div class="brand"><span class="mark"></span>CathSim</div>
+  <div id="gateUser">
+    <div style="color:rgba(255,255,255,.55);margin-top:4px">Name und Passwort</div>
+    <input id="user" type="text" autocomplete="username" placeholder="Dein Name" style="letter-spacing:0">
+    <input id="code" type="password" autocomplete="current-password" placeholder="Passwort" style="letter-spacing:0">
+    <div class="err" id="codeErr"></div>
+    <button class="primary" id="codeGo">Öffnen</button>
+  </div>
+  <div id="gateAdmin" style="display:none">
+    <div style="color:rgba(255,255,255,.55);margin-top:4px">Verwaltung – E-Mail und Admin-Passwort</div>
+    <input id="adminEmail" type="email" autocomplete="username" placeholder="E-Mail" style="letter-spacing:0">
+    <input id="adminPw" type="password" autocomplete="current-password" placeholder="Admin-Passwort" style="letter-spacing:0">
+    <div class="err" id="adminErr"></div>
+    <button class="primary" id="adminGo">Anmelden</button>
+  </div>
+</div>
+<button id="toAdmin" class="corner">Verwaltung</button>
+<button id="toUser" class="corner" style="display:none">Zurück</button>
+</div>
+<div id="loader">
+  <svg viewBox="0 0 520 340" width="520" height="340" aria-hidden="true">
+    <path id="ldVessel" d="M 30 300 C 30 150 150 70 270 70 C 370 70 420 150 450 110 C 465 90 475 60 480 30" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="16" stroke-linecap="round"/>
+    <path id="ldVessel2" d="M 30 300 C 30 150 150 70 270 70 C 370 70 420 150 450 110 C 465 90 475 60 480 30" fill="none" stroke="rgba(59,156,255,.18)" stroke-width="6" stroke-linecap="round"/>
+    <path id="ldCath" d="M 30 300 C 30 150 150 70 270 70 C 370 70 420 150 450 110 C 465 90 475 60 480 30" fill="none" stroke="#f3f5f8" stroke-width="3.2" stroke-linecap="round"/>
+    <circle id="ldTip" r="5" fill="#3b9cff"/>
+  </svg>
+  <div id="ldText">Engine wird geladen …</div>
+  <div id="ldSub">Katheter, Drähte und ein echtes CT – einen Moment</div>
+</div>
+<div id="admin">
+  <div class="card glass" id="adminCard">
+    <div class="mhead"><svg class="ic"><use href="#ic-users"/></svg><b>Verwaltung</b><span style="flex:1;color:var(--dim);font-size:11px" id="adminWho"></span><button id="adminToStation">Zur Station</button><button id="adminLogout" title="Abmelden"><svg class="ic"><use href="#ic-logout"/></svg></button></div>
+    <div class="mbody">
+      <div class="mside" style="flex:1">
+        <h4>FREIGESCHALTETE NAMEN</h4>
+        <div class="s" style="color:var(--dim);margin-bottom:6px">Ein Name je Zeile. Diese Personen melden sich mit ihrem Namen und dem gemeinsamen Passwort an.</div>
+        <textarea id="adminUsers" spellcheck="false"></textarea>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:8px"><button class="primary" id="adminSave">Speichern</button><span id="adminSaved" style="font-size:11px;color:var(--ok)"></span></div>
+      </div>
+      <div class="mside" style="flex:1">
+        <h4>ANMELDUNGEN</h4>
+        <div id="adminLogins" class="logins"></div>
+      </div>
+      <div class="mside" style="flex:1.3">
+        <h4>KOMMENTARE ZU FÄLLEN</h4>
+        <div id="adminComments" class="comments"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="setup">
+  <div class="head glass">
+    <div class="brand"><span class="mark"></span>CathSim</div>
+    <div class="steps" id="steps"></div>
+    <div style="color:var(--dim)" id="setupUser"></div>
+    <button id="adminOpen" style="display:none"><svg class="ic"><use href="#ic-users"/></svg> Verwaltung</button>
+    <button id="logout1" title="Abmelden"><svg class="ic"><use href="#ic-logout"/></svg> Abmelden</button>
+  </div>
+  <div class="pages">
+    <div class="page on" id="page0">
+      <div class="col" style="max-width:440px">
+        <h3>FALL</h3>
+        <div class="domains" id="domains"></div>
+        <div id="cases"></div>
+      </div>
+      <div class="col" id="caseDetail"></div>
+    </div>
+    <div class="page" id="page1">
+      <div class="col"><h3>SCHWIERIGKEIT</h3><div id="difficulties"></div></div>
+      <div class="col"><h3>STARTPUNKT</h3><div id="stages"></div></div>
+    </div>
+    <div class="page" id="page2">
+      <div class="col"><h3>MATERIALTISCH</h3><div class="s" style="color:var(--dim);margin-bottom:10px">Was hier liegt, steht im Fall bereit. Nachlegen geht jederzeit über „Weiteres Material".</div><div id="tray"></div></div>
+    </div>
+    <div class="page" id="page3">
+      <div class="col" style="display:flex;align-items:center;justify-content:center">
+        <div class="mqr"><div class="qrbox"></div><div class="codebox"></div><div class="statebox"></div></div>
+      </div>
+      <div class="col">
+        <h3>HANDY ALS BEDIENFELD</h3>
+        <div class="mstep"><span class="n">1</span><span>Auf dem Handy die Controller-Seite öffnen – am einfachsten mit der Kamera-App den QR-Code scannen.</span></div>
+        <div class="mstep"><span class="n">2</span><span>Namen eingeben; der Code wird automatisch übernommen. Oder den Code eintippen.</span></div>
+        <div class="mstep"><span class="n">3</span><span>Hier antippen, wer steuern darf. Alle anderen schauen auf ihrem Handy zu.</span></div>
+        <div class="urlbox"></div>
+        <h4 style="font-size:9px;letter-spacing:.14em;color:var(--dim);margin:14px 0 4px">VERBUNDEN</h4>
+        <div class="whobox"></div>
+        <div class="s" style="color:var(--dim);margin-top:16px">Ohne Handy geht es auch: Tastatur und Maus an der Station steuern alles. Die Verbindung lässt sich später über „Handy verbinden" in der Seitenleiste nachholen.</div>
+        <h4 style="font-size:9px;letter-spacing:.14em;color:var(--dim);margin:18px 0 4px">ANMELDUNGEN</h4>
+        <div id="loginList" style="font-size:11px;line-height:1.6;max-height:160px;overflow:auto"></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="info" id="footInfo"></div>
+    <button id="back"><svg class="ic"><use href="#ic-chevL"/></svg> Zurück</button>
+    <button id="next">Weiter <svg class="ic"><use href="#ic-chevR"/></svg></button>
+    <button class="primary" id="start"><svg class="ic"><use href="#ic-play"/></svg> Fall starten</button>
+  </div>
+</div>
+
+<div id="station">
+  <div id="side" class="glass">
+    <div style="display:flex;align-items:center;gap:8px"><span class="brand" style="font-size:17px"><span class="mark" style="width:22px;height:22px"></span>CathSim</span><span style="flex:1"></span><button id="change">Fall wechseln</button><button id="logout2" title="Abmelden"><svg class="ic"><use href="#ic-logout"/></svg></button></div>
+    <div id="title" style="color:var(--dim);font-size:11px;margin-top:4px"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:2px"><div id="buildTag" style="color:rgba(255,255,255,.3);font-size:9px;font-family:'SF Mono',Menlo,monospace"></div><span style="flex:1"></span><button id="bNote" style="padding:3px 8px;background:none;border:none;box-shadow:none"><svg class="ic"><use href="#ic-chat"/></svg> Feedback zum Fall</button></div>
+    <div class="row" style="margin-top:8px"><button id="bLink"><svg class="ic"><use href="#ic-phone"/></svg> Handy verbinden</button></div>
+    <div id="linkWho"></div>
+    <h4>MATERIAL</h4>
+    <div id="devices"></div>
+    <div id="shapes" class="row" style="margin-top:6px"></div>
+    <select id="addDevice" style="width:100%;margin-top:6px;background:#000;color:#fff;border:1px solid var(--line);border-radius:8px;padding:6px"><option value="">Weiteres Material …</option></select>
+    <h4>BEWEGUNG</h4>
+    <div class="row"><button data-adv="-5"><svg class="ic"><use href="#ic-arrowL"/></svg> zurück</button><button data-adv="5">vor <svg class="ic"><use href="#ic-arrowR"/></svg></button></div>
+    <div class="row" style="margin-top:5px"><button data-tq="-0.2"><svg class="ic"><use href="#ic-rotL"/></svg> torque</button><button data-tq="0.2">torque <svg class="ic"><use href="#ic-rotR"/></svg></button></div>
+    <div style="font-size:10px;color:var(--dim);margin-top:4px">Tasten: Pfeil auf/ab schieben, links/rechts torquen, F fein, Tab wechseln</div>
+    <h4>AKTIONEN</h4>
+    <div class="row"><button id="bFluoro">Fluoro</button><button id="bKM">KM</button><button id="bDSA">Exposure</button><button id="bRoad">Roadmap</button></div>
+    <div class="row" style="margin-top:5px"><button id="bAsp">Aspirieren</button><button id="bDetach">Coil ablösen</button><button id="bWithdraw">entfernen</button></div>
+    <h4>GEOMETRIE</h4>
+    <div class="rocker"><span class="lbl">Rotation</span><button data-lao="-5">RAO</button><span class="val" id="vLao"></span><button data-lao="5">LAO</button></div>
+    <div class="rocker"><span class="lbl">Angulation</span><button data-cra="-5">CAUD</button><span class="val" id="vCra"></span><button data-cra="5">CRAN</button></div>
+    <div class="row" id="fovs"></div>
+    <div class="row" style="margin-top:5px"><button id="bCenter">Zentrieren</button></div>
+    <h4>PROTOKOLL</h4>
+    <div class="events" id="events"></div>
+  </div>
+  <div id="view">
+    <canvas id="fluoro"></canvas>
+    <div id="msg"></div>
+    <div class="hud" id="hudTL"></div>
+    <div class="hud" id="hudTR"></div>
+    <div class="hud" id="hudBL"></div>
+    <div id="hudBR">
+      <div id="vitals"><canvas id="ecg" width="170" height="28"></canvas><span><span class="l">HF</span><span class="v" id="vHr"></span></span><span><span class="l">RR</span><span class="v" id="vRr"></span></span><span><span class="l">SpO₂</span><span class="v" id="vSp"></span></span></div>
+      <div id="badges"></div>
+    </div>
+  </div>
+  <div id="strip" class="glass"><h4>KOAXIAL</h4><canvas id="stripCanvas"></canvas><div id="stripLoc"></div></div>
+</div>
+<div id="linkModal">
+  <div class="card glass" id="linkCard">
+    <div class="mhead"><svg class="ic"><use href="#ic-phone"/></svg><b>Handy verbinden</b><span style="flex:1"></span><button id="linkClose" title="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button></div>
+    <div class="mbody">
+      <div class="mqr">
+        <div id="qr" class="qrbox"></div>
+        <div id="linkCode" class="codebox"></div>
+        <div id="linkState" class="statebox"></div>
+      </div>
+      <div class="mside">
+        <div class="mstep"><span class="n">1</span><span>Auf dem Handy die Controller-Seite öffnen – am einfachsten mit der Kamera-App den QR-Code scannen.</span></div>
+        <div class="mstep"><span class="n">2</span><span>Namen eingeben; der Code wird automatisch übernommen. Oder den Code eintippen.</span></div>
+        <div class="mstep"><span class="n">3</span><span>Hier antippen, wer steuern darf. Alle anderen schauen auf ihrem Handy zu.</span></div>
+        <div id="linkUrl" class="urlbox"></div>
+        <h4>VERBUNDEN</h4>
+        <div id="modalWho" class="whobox"></div>
+      </div>
+    </div>
+    <div class="mfoot"><button id="linkDrop"><svg class="ic"><use href="#ic-unlink"/></svg> Verbindung trennen</button><span style="flex:1"></span><button class="primary" id="linkDone">Fertig</button></div>
+  </div>
+</div>
+<div id="noteModal">
+  <div id="noteCard" class="glass">
+    <div style="display:flex;align-items:center;gap:8px"><svg class="ic" style="color:var(--accent)"><use href="#ic-chat"/></svg><b>Feedback zum Fall</b><span style="flex:1"></span><button id="noteClose" style="padding:5px 8px;border-radius:999px"><svg class="ic"><use href="#ic-close"/></svg></button></div>
+    <div id="noteCase" style="font-size:12px;color:var(--dim)"></div>
+    <textarea id="noteText" placeholder="Was fiel auf? Was fehlt, was stört, was war gut?"></textarea>
+    <div style="display:flex;align-items:center;gap:10px"><button class="primary" id="noteSend">Senden</button><span id="noteState" style="font-size:11px;color:var(--dim)">Geht direkt an Jonathan. Testphase.</span></div>
+  </div>
+</div>
+<div id="progress"></div><div id="loadtext"></div>
+<script src="icons.js?v=20261014164442"></script>
+<script src="vendor/mqtt.min.js"></script>
+<script src="vendor/qrcode.min.js"></script>
+<script src="config.js?v=20261014164442"></script>
+<script src="wasi.js?v=20261014164442"></script>
+<script src="link.js?v=20261014164442"></script>
+<script src="fluoro.js?v=20261014164442"></script>
+<script src="app.js?v=20261014164442"></script>
+</body>
+</html>
