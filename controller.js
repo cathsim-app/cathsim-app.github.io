@@ -152,7 +152,7 @@
     const px = (mm) => W - (Math.min(Math.max((mm - start) / win, 0), 1) * (W - 26) + 8);
     ctx.fillStyle = 'rgba(255,255,255,.14)'; ctx.beginPath(); ctx.roundRect(W - 20, axis - 30, 26, 60, 8); ctx.fill();
     for (const d of devs) {
-      const hh = Math.max(3, Math.min(26, d.od * 7.5)), tipX = px(d.ins), isA = d.i === s.active, col = isA ? '59,156,255' : (d.wire ? '158,158,158' : '219,219,219');
+      const hh = Math.max(3, Math.min(26, d.od * 7.5)), tipX = px(d.ins), isA = d.i === s.active, col = isA ? '10,132,255' : (d.wire ? '158,158,158' : '219,219,219');
       ctx.fillStyle = `rgba(${col},${isA ? 1 : 0.7})`; ctx.beginPath(); ctx.roundRect(tipX, axis - hh, W + 14 - tipX, hh * 2, hh); ctx.fill();
       ctx.strokeStyle = 'rgba(0,0,0,.4)'; ctx.lineWidth = 0.9; ctx.stroke();
       ctx.save(); ctx.clip();

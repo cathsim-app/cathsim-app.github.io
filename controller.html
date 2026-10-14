@@ -67,8 +67,42 @@
   #connect #camGo { white-space: nowrap; border: none; border-radius: 999px; background: rgba(118,118,128,.5); box-shadow: none; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
   #connect #go { width: 280px !important; height: 50px; border: none; border-radius: 12px; background: #0a84ff; color: #fff; font-size: 17px; box-shadow: none; }
   #connect #go:active { background: #0071e3; transform: scale(.99); }
+  /* Bedienfeld im Apple-Stil: gefüllte graue Knöpfe wie unter iOS, aktive Zustände in
+     Systemblau, Systemfarben für Warnungen, keine Verläufe und kein Leuchten. */
+  html, body { background: #000; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #app { --fill: rgba(118,118,128,.24); --fill2: rgba(118,118,128,.36); --blue: #0a84ff; --sysorange: #ff9f0a; --sysred: #ff453a; --sysgreen: #30d158; --gray: #8e8e93; gap: 10px; }
+  #app button { border: none; border-radius: 12px; background: var(--fill); box-shadow: none; color: #fff; font-weight: 590; letter-spacing: -.01em; transition: background .15s, transform .08s; }
+  #app button:active { transform: scale(.97); background: var(--fill2); }
+  #app button.lit, #app button.on { background: var(--blue); border: none; box-shadow: none; color: #fff; }
+  #app button.orange, #app .chips button.coupled { background: var(--sysorange); color: #000; }
+  #app button.red { background: var(--sysred); }
+  #app .top { padding-top: 10px; font-size: 13px; color: var(--gray); }
+  #app .top b { font-size: 17px; font-weight: 600; letter-spacing: -.02em; color: #fff; margin-right: 2px; }
+  #app #logout { background: var(--fill); border-radius: 999px; padding: 6px 10px !important; }
+  #app .state { width: 8px; height: 8px; background: var(--sysred); } #app .state.ok { background: var(--sysgreen); }
+  #app .who { font-size: 13px; color: var(--blue); } #app .who .others { color: var(--gray); }
+  #app #tip { font-size: 15px; color: #fff; letter-spacing: -.01em; }
+  #app #alert, #app #unsheath, #app #viewerNote { color: var(--sysorange); }
+  #app .chips { gap: 8px; }
+  #app .chips button { min-width: 84px; padding: 9px 10px; border-radius: 14px; font-size: 13px; }
+  #app .chips button small { font-size: 11px; color: rgba(235,235,245,.6); font-variant-numeric: tabular-nums; }
+  #app .chips button.on small { color: rgba(255,255,255,.8); }
+  #app #shapes { gap: 2px; padding: 2px; border-radius: 10px; background: var(--fill); }
+  #app #shapes button { padding: 7px 4px; border-radius: 8px; background: transparent; font-size: 13px; }
+  #app #shapes button.lit { background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,.12), 0 3px 1px rgba(0,0,0,.04); }
+  #app #stage { border: none; border-radius: 20px; background: #1c1c1e; box-shadow: none; }
+  #app #stage.table { box-shadow: inset 0 0 0 2px var(--blue); }
+  #app #stage .hint { font-size: 12px; color: var(--gray); }
+  #app #readout { font: 500 13px ui-monospace, "SF Mono", Menlo, monospace; color: rgba(235,235,245,.6); }
+  #app .row, #app .geo { gap: 8px; }
+  #app .row button { font-size: 14px; padding: 12px 6px; }
+  #app .geo button { font-size: 12px; padding: 10px 4px; }
+  #app #sheathBar { border-radius: 12px; background: rgba(255,159,10,.22); color: var(--sysorange); }
+  #app #sheathFill { border-radius: 12px; background: rgba(255,159,10,.35); }
+  #app #vit { justify-content: space-between; padding: 10px 14px; margin-bottom: 6px; border-radius: 14px; background: #1c1c1e; font: 500 13px ui-monospace, "SF Mono", Menlo, monospace; color: rgba(235,235,245,.75); }
+  #app #vit.warn { color: var(--sysorange); } #app #vit.red { color: var(--sysred); }
 </style>
-<script>window.CATHSIM_BUILD="20261014221132"</script></head>
+<script>window.CATHSIM_BUILD="20261014221700"</script></head>
 <body>
 <div id="connect">
   <div class="brand"><span class="mark"></span>CathSim</div>
@@ -101,11 +135,11 @@
   <div class="row"><button id="bAsp">Aspirieren</button><button id="bDetach">Coil ablösen</button><button id="bCenter">Zentrieren</button></div>
   <div id="vit"><span>HF <span id="vHr">–</span></span><span>RR <span id="vRr">–</span></span><span>SpO₂ <span id="vSp">–</span></span></div>
 </div>
-<script src="icons.js?v=20261014221132"></script>
+<script src="icons.js?v=20261014221700"></script>
 <script src="vendor/mqtt.min.js"></script>
 <script src="vendor/jsQR.min.js"></script>
-<script src="config.js?v=20261014221132"></script>
-<script src="link.js?v=20261014221132"></script>
-<script src="controller.js?v=20261014221132"></script>
+<script src="config.js?v=20261014221700"></script>
+<script src="link.js?v=20261014221700"></script>
+<script src="controller.js?v=20261014221700"></script>
 </body>
 </html>
