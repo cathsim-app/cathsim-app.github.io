@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CathSim Station</title>
-<link rel="stylesheet" href="style.css?v=20261014164442">
-<script>window.CATHSIM_BUILD="20261014164442"</script></head>
+<link rel="stylesheet" href="style.css?v=20261014214322">
+<script>window.CATHSIM_BUILD="20261014214322"</script></head>
 <body>
 <div id="gate">
 <svg class="veins" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -28,21 +28,28 @@
   <circle class="tip" r="5"/>
 </svg>
 <div class="noise"></div>
-<div class="box glass">
-  <div class="brand"><span class="mark"></span>CathSim</div>
-  <div id="gateUser">
-    <div style="color:rgba(255,255,255,.55);margin-top:4px">Name und Passwort</div>
-    <input id="user" type="text" autocomplete="username" placeholder="Dein Name" style="letter-spacing:0">
-    <input id="code" type="password" autocomplete="current-password" placeholder="Passwort" style="letter-spacing:0">
-    <div class="err" id="codeErr"></div>
-    <button class="primary" id="codeGo">Öffnen</button>
-  </div>
-  <div id="gateAdmin" style="display:none">
-    <div style="color:rgba(255,255,255,.55);margin-top:4px">Verwaltung – E-Mail und Admin-Passwort</div>
-    <input id="adminEmail" type="email" autocomplete="username" placeholder="E-Mail" style="letter-spacing:0">
-    <input id="adminPw" type="password" autocomplete="current-password" placeholder="Admin-Passwort" style="letter-spacing:0">
-    <div class="err" id="adminErr"></div>
-    <button class="primary" id="adminGo">Anmelden</button>
+<div class="gwrap">
+  <section class="intro">
+    <div class="brand"><span class="mark"></span>CathSim</div>
+    <p class="lead"><strong>CathSim</strong> ist ein Angiographie-Simulator für den Browser. Man führt einen Katheter durch die Gefäße und sieht dabei ein realistisches Durchleuchtungsbild wie im Angiographie-Raum. Das Bild läuft auf dem großen Bildschirm, gesteuert wird mit dem eigenen Handy. So lassen sich Kathetertechniken realitätsnah üben und simulieren.</p>
+  </section>
+  <div class="box glass">
+    <div id="gateUser">
+      <div class="boxhead">Anmelden</div>
+      <div class="boxsub">Name und Passwort</div>
+      <input id="user" type="text" autocomplete="username" placeholder="Dein Name">
+      <input id="code" type="password" autocomplete="current-password" placeholder="Passwort">
+      <div class="err" id="codeErr"></div>
+      <button class="primary" id="codeGo">Öffnen</button>
+    </div>
+    <div id="gateAdmin" style="display:none">
+      <div class="boxhead">Verwaltung</div>
+      <div class="boxsub">E-Mail und Admin-Passwort</div>
+      <input id="adminEmail" type="email" autocomplete="username" placeholder="E-Mail">
+      <input id="adminPw" type="password" autocomplete="current-password" placeholder="Admin-Passwort">
+      <div class="err" id="adminErr"></div>
+      <button class="primary" id="adminGo">Anmelden</button>
+    </div>
   </div>
 </div>
 <button id="toAdmin" class="corner">Verwaltung</button>
@@ -199,13 +206,13 @@
   </div>
 </div>
 <div id="progress"></div><div id="loadtext"></div>
-<script src="icons.js?v=20261014164442"></script>
+<script src="icons.js?v=20261014214322"></script>
 <script src="vendor/mqtt.min.js"></script>
 <script src="vendor/qrcode.min.js"></script>
-<script src="config.js?v=20261014164442"></script>
-<script src="wasi.js?v=20261014164442"></script>
-<script src="link.js?v=20261014164442"></script>
-<script src="fluoro.js?v=20261014164442"></script>
-<script src="app.js?v=20261014164442"></script>
+<script src="config.js?v=20261014214322"></script>
+<script src="wasi.js?v=20261014214322"></script>
+<script src="link.js?v=20261014214322"></script>
+<script src="fluoro.js?v=20261014214322"></script>
+<script src="app.js?v=20261014214322"></script>
 </body>
 </html>

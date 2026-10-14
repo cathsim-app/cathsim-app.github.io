@@ -11,9 +11,19 @@ button:disabled { opacity: .35; cursor: default; }
 .mono { font-family: "SF Mono", Menlo, monospace; }
 .glass { background: var(--panel); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); border: 1px solid var(--line); }
 #gate { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 50; }
-#gate .box { width: 340px; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
-#gate input { width: 100%; margin: 16px 0; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0,0,0,.5); color: #fff; font-size: 18px; text-align: center; letter-spacing: .25em; }
-#gate .err { color: var(--red); min-height: 1.2em; font-size: 12px; }
+#gate .gwrap { position: relative; z-index: 1; width: min(1040px, 100%); max-height: 100%; overflow-y: auto; box-sizing: border-box; padding: 40px 32px; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 72px; align-items: center; }
+#gate .intro { position: relative; animation: rise .8s cubic-bezier(.2,.8,.2,1) both; }
+#gate .intro .brand { font-size: 44px; gap: 16px; letter-spacing: -.025em; }
+#gate .lead { margin: 22px 0 0; max-width: 34em; font-size: 17px; line-height: 1.65; color: rgba(242,244,248,.72); text-wrap: pretty; }
+#gate .lead, #gate .intro .brand { text-shadow: 0 1px 12px rgba(7,9,12,.9); }
+#gate .lead strong { color: var(--fg); font-weight: 650; }
+#gate .box { width: 100%; box-sizing: border-box; padding: 30px 28px 26px; border-radius: 22px; box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06); }
+#gate .boxhead { font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+#gate .boxsub { margin: 4px 0 20px; font-size: 13px; color: var(--dim); }
+#gate input { display: block; width: 100%; box-sizing: border-box; margin: 0 0 12px; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(0,0,0,.45); color: #fff; font: 16px -apple-system, "SF Pro Text", Inter, system-ui, sans-serif; transition: border-color .15s, box-shadow .15s, background .15s; }
+#gate input::placeholder { color: rgba(242,244,248,.38); }
+#gate .err { color: var(--red); min-height: 1.3em; margin: 2px 0 10px; font-size: 12px; }
+#gate .primary { width: 100%; padding: 13px 22px; font-size: 15px; }
 #gate .corner { position: fixed; right: 18px; bottom: 14px; font-size: 11px; padding: 6px 10px; background: none; border: none; box-shadow: none; color: rgba(255,255,255,.3); }
 #gate .corner:hover { color: var(--fg); background: none; }
 /* Ladeanimation: ein Draht fährt durch den Bogen, so weit wie geladen ist */
@@ -25,7 +35,7 @@ button:disabled { opacity: .35; cursor: default; }
 .brand { display: inline-flex; align-items: center; gap: 9px; font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
 .brand .mark { width: 30px; height: 30px; border-radius: 9px; position: relative; filter: drop-shadow(0 0 10px rgba(34,227,197,.45)); }
 .brand .mark svg { width: 100%; height: 100%; display: block; }
-#gate .brand .mark { width: 56px; height: 56px; border-radius: 16px; }
+#gate .brand .mark { width: 64px; height: 64px; border-radius: 18px; }
 #setup, #station { position: fixed; inset: 0; display: none; }
 #setup.on, #station.on { display: flex; }
 #setup { flex-direction: column; }
@@ -142,6 +152,8 @@ select { font: inherit; color: #fff; background: rgba(0,0,0,.45); border: 1px so
 #gate { overflow: hidden; }
 #gate .veins { position: absolute; inset: -5% -5%; width: 110%; height: 110%; pointer-events: none; opacity: .9; }
 #gate .veins path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+/* Hinter dem Text treten die Gefäße zurück, damit er lesbar bleibt */
+#gate .veins { --mx: calc(50% - 216px); --my: 50%; --mr: 400px 250px; -webkit-mask-image: radial-gradient(ellipse var(--mr) at var(--mx) var(--my), rgba(0,0,0,.12) 55%, #000); mask-image: radial-gradient(ellipse var(--mr) at var(--mx) var(--my), rgba(0,0,0,.12) 55%, #000); }
 #gate .veins .wall path { stroke: rgba(255,255,255,.05); stroke-width: 12; }
 /* Die Serie: erst fährt der Katheter in den Stamm, dann läuft das Kontrastmittel vom
    Katheter aus Ast für Ast in die Peripherie, steht kurz und wäscht aus. Alle 10 s. */
@@ -149,17 +161,28 @@ select { font: inherit; color: #fff; background: rgba(0,0,0,.45); border: 1px so
 #gate .veins .v.d1 { animation-delay: .9s; stroke-width: 2.4; }
 #gate .veins .v.d2 { animation-delay: 1.7s; stroke-width: 1.8; }
 @keyframes run { 0%, 28% { stroke-dashoffset: 1000; opacity: 0; } 32% { opacity: .95; } 50% { stroke-dashoffset: 0; opacity: .9; } 74% { opacity: .85; stroke-dashoffset: 0; } 88%, 100% { opacity: 0; stroke-dashoffset: 0; } }
-#gate .veins .cath { stroke: #f3f5f8; stroke-width: 3.2; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: cath 10s cubic-bezier(.3,.7,.3,1) infinite; filter: drop-shadow(0 1px 2px rgba(0,0,0,.8)); }
+#gate .veins .cath { stroke: #f3f5f8; stroke-width: 3.2; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: cath 10s cubic-bezier(.3,.7,.3,1) infinite; }
 @keyframes cath { 0% { stroke-dashoffset: 1000; opacity: 0; } 4% { opacity: 1; } 27% { stroke-dashoffset: 0; opacity: 1; } 90% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 1000; opacity: 0; } }
 #gate .veins .tip { fill: #f3f5f8; animation: tip 10s cubic-bezier(.3,.7,.3,1) infinite; offset-path: path('M 80 760 C 90 560 160 470 300 430 C 440 390 520 300 540 180'); offset-rotate: 0deg; }
 @keyframes tip { 0% { offset-distance: 0%; opacity: 0; } 4% { opacity: 1; } 27% { offset-distance: 100%; opacity: 1; } 90% { offset-distance: 100%; opacity: 1; } 96%, 100% { offset-distance: 100%; opacity: 0; } }
+/* Dunkler Bildrand wie beim runden Detektorfeld */
+#gate::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 85% 80% at 50% 50%, transparent 55%, rgba(0,0,0,.55)); }
 #gate .noise { position: absolute; inset: 0; pointer-events: none; opacity: .06; background: repeating-radial-gradient(circle at 30% 20%, rgba(255,255,255,.4) 0 1px, transparent 1px 3px); animation: flick .12s steps(2) infinite; }
 @keyframes flick { to { transform: translate(1px, -1px); } }
 #gate .box { position: relative; animation: rise .7s cubic-bezier(.2,.8,.2,1) both; border-color: rgba(34,227,197,.18); }
 @keyframes rise { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: none; } }
 #gate .brand .mark { animation: pulse 3.2s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 18px rgba(34,227,197,.45); } 50% { box-shadow: 0 0 34px rgba(34,227,197,.85); } }
-#gate input:focus { outline: none; border-color: rgba(34,227,197,.6); box-shadow: 0 0 0 3px rgba(34,227,197,.15); }
+#gate input:focus { outline: none; border-color: rgba(34,227,197,.6); background: rgba(0,0,0,.6); box-shadow: 0 0 0 3px rgba(34,227,197,.15); }
+#gate .corner { z-index: 2; }
+@media (max-width: 860px) {
+  #gate .gwrap { grid-template-columns: minmax(0, 1fr); gap: 28px; max-width: 460px; padding: 32px 16px 56px; align-self: stretch; align-content: center; }
+  #gate .veins { --mx: 50%; --my: calc(50% - 170px); --mr: 300px 230px; }
+  #gate .intro .brand { font-size: 34px; gap: 12px; }
+  #gate .brand .mark { width: 50px; height: 50px; border-radius: 14px; }
+  #gate .lead { margin-top: 16px; font-size: 15px; line-height: 1.6; }
+}
+@media (prefers-reduced-motion: reduce) { #gate *, #gate *::before { animation: none !important; } #gate .veins .v, #gate .veins .cath { stroke-dashoffset: 0; opacity: .6; } }
 /* Kommentare (Testphase) */
 #noteModal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.5); z-index: 62; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 #noteModal.on { display: flex; }
