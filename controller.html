@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0c0e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>CathSim Controller</title>
+<style>
+  :root { --bg: #000; --panel: rgba(28,28,30,.82); --line: rgba(255,255,255,.08); --dim: #8e8e93; --accent: #0a84ff; --accent2: #64d2ff; --orange: #ff9f0a; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+  html, body { margin: 0; height: 100%; background: #000; color: #fff; font: 14px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; overscroll-behavior: none; touch-action: manipulation; }
+  button { font: inherit; color: inherit; background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.06)); border: 1px solid var(--line); border-radius: 12px; padding: 11px 8px; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 1px 2px rgba(0,0,0,.35); font-weight: 600; }
+  button:active { transform: translateY(1px); }
+  button.lit, button.on { background: linear-gradient(180deg, rgba(10,132,255,.8), rgba(10,132,255,.5)); border-color: rgba(10,132,255,.7); box-shadow: 0 0 16px rgba(10,132,255,.35); }
+  button.orange { background: linear-gradient(180deg, rgba(255,154,46,.8), rgba(255,154,46,.5)); border-color: rgba(255,190,110,.6); } button.red { background: rgba(255,80,80,.6); }
+  .brand { display: inline-flex; align-items: center; gap: 9px; font-size: 24px; font-weight: 800; }
+  .brand .mark { width: 34px; height: 34px; border-radius: 10px; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,.35); overflow: hidden; }
+  .brand .mark svg { width: 100%; height: 100%; display: block; }
+  #connect { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; overflow: auto; }
+  #app.viewer #stage { opacity: .45; }
+  #viewerNote { display: none; font-size: 12px; color: var(--orange); font-weight: 600; text-align: center; } #app.viewer #viewerNote { display: block; }
+  #connect input { font-size: 18px; text-align: center; width: 260px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(0,0,0,.5); color: #fff; }
+  #connect input#code { font-size: 26px; letter-spacing: .3em; text-transform: uppercase; }
+  .who { font-size: 11px; color: var(--accent2); font-weight: 600; min-height: 1.3em; }
+  .who .others { color: var(--dim); font-weight: 400; }
+  #app { display: none; flex-direction: column; height: 100%; padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom); gap: 8px; }
+  #app.on { display: flex; }
+  .top { display: flex; align-items: center; gap: 8px; padding-top: 8px; font-size: 12px; color: var(--dim); }
+  .top b { color: #fff; }
+  .state { margin-left: auto; width: 9px; height: 9px; border-radius: 50%; background: #ff5a5a; } .state.ok { background: #4ad27a; }
+  #tip { font-size: 12px; color: var(--dim); min-height: 1.4em; }
+  #alert { font-size: 12px; color: var(--orange); min-height: 1.4em; font-weight: 600; }
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  .chips button { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; min-width: 78px; padding: 8px 6px; font-size: 11px; font-weight: 600; }
+  .chips button small { font-weight: 400; color: var(--dim); font-size: 10px; }
+  .chips button.coupled { background: rgba(255,154,46,.6); }
+  #stage { flex: 1; min-height: 150px; border-radius: 18px; background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); border: 1px solid var(--line); position: relative; touch-action: none; overflow: hidden; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.4); }
+  #stage.table { border-color: rgba(59,156,255,.6); box-shadow: 0 0 24px rgba(59,156,255,.25); }
+  .chips button { font-weight: 600; }
+  .geo { display: flex; gap: 5px; } .geo button { flex: 1; font-size: 11px; padding: 9px 4px; }
+  #stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #stage .hint { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-size: 11px; color: var(--dim); pointer-events: none; }
+  #readout { position: absolute; top: 8px; right: 12px; font: 600 12px "SF Mono", Menlo, monospace; color: rgba(255,255,255,.75); }
+  .row { display: flex; gap: 6px; } .row button { flex: 1; font-size: 12px; font-weight: 600; }
+  #sheath { display: none; gap: 8px; align-items: stretch; } #sheath.on { display: flex; }
+  #hold { width: 90px; font-size: 11px; } #sheathBar { flex: 1; border-radius: 10px; background: rgba(255,154,46,.3); position: relative; touch-action: none; display: flex; align-items: center; padding-left: 12px; font-size: 11px; font-weight: 600; }
+  #sheathFill { position: absolute; right: 0; top: 0; bottom: 0; background: rgba(255,154,46,.35); border-radius: 10px; }
+  #unsheath { display: none; font-size: 11px; color: var(--orange); font-weight: 600; } #unsheath.on { display: block; }
+  #vit { font: 600 12px "SF Mono", Menlo, monospace; color: rgba(255,255,255,.75); display: flex; gap: 14px; }
+  #vit.warn { color: var(--orange); } #vit.red { color: #ff5a5a; }
+  .ic { width: 1.05em; height: 1.05em; vertical-align: -.18em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  /* Verbindungsbildschirm im Stil der Startseite: ruhig, Systemschrift, blauer Knopf, kein Leuchten */
+  #connect { background: #000; -webkit-font-smoothing: antialiased; gap: 12px; }
+  #connect { justify-content: safe center; } #connect > * { flex-shrink: 0; }
+  #connect .brand { font: 600 22px -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.01em; gap: 10px; margin-bottom: 10px; }
+  #connect .brand .mark { width: 40px; height: 40px; border-radius: 23%; }
+  #connect input { width: 280px; height: 50px; padding: 0 16px; border: 1px solid transparent; border-radius: 12px; background: rgba(118,118,128,.24); font-size: 17px; letter-spacing: -.01em; user-select: text; -webkit-user-select: text; }
+  #connect input::placeholder { color: rgba(235,235,245,.38); }
+  #connect input:focus { outline: none; box-shadow: 0 0 0 4px rgba(10,132,255,.45); }
+  #connect input#code { height: 58px; font-size: 26px; letter-spacing: .3em; }
+  #connect #scanBox { width: 280px !important; height: 280px !important; border-radius: 20px !important; border-color: rgba(255,255,255,.08) !important; }
+  #connect #scanBox > div:not(#scanText) { border-color: rgba(255,255,255,.7) !important; }
+  #connect #camGo { white-space: nowrap; border: none; border-radius: 999px; background: rgba(118,118,128,.5); box-shadow: none; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  #connect #go { width: 280px !important; height: 50px; border: none; border-radius: 12px; background: #0a84ff; color: #fff; font-size: 17px; box-shadow: none; }
+  #connect #go:active { background: #0071e3; transform: scale(.99); }
+  /* Bedienfeld im Apple-Stil: gefüllte graue Knöpfe wie unter iOS, aktive Zustände in
+     Systemblau, Systemfarben für Warnungen, keine Verläufe und kein Leuchten. */
+  html, body { background: #000; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #app { --fill: rgba(118,118,128,.24); --fill2: rgba(118,118,128,.36); --blue: #0a84ff; --sysorange: #ff9f0a; --sysred: #ff453a; --sysgreen: #30d158; --gray: #8e8e93; gap: 10px; }
+  #app button { border: none; border-radius: 12px; background: var(--fill); box-shadow: none; color: #fff; font-weight: 590; letter-spacing: -.01em; transition: background .15s, transform .08s; }
+  #app button:active { transform: scale(.97); background: var(--fill2); }
+  #app button.lit, #app button.on { background: var(--blue); border: none; box-shadow: none; color: #fff; }
+  #app button.orange, #app .chips button.coupled { background: var(--sysorange); color: #000; }
+  #app button.red { background: var(--sysred); }
+  #app .top { padding-top: 10px; font-size: 13px; color: var(--gray); }
+  #app .top b { font-size: 17px; font-weight: 600; letter-spacing: -.02em; color: #fff; margin-right: 2px; }
+  #app #logout { background: var(--fill); border-radius: 999px; padding: 6px 10px !important; }
+  #app .state { width: 8px; height: 8px; background: var(--sysred); } #app .state.ok { background: var(--sysgreen); }
+  #app .who { font-size: 13px; color: var(--blue); } #app .who .others { color: var(--gray); }
+  #app #tip { font-size: 15px; color: #fff; letter-spacing: -.01em; }
+  #app #alert, #app #unsheath, #app #viewerNote { color: var(--sysorange); }
+  #app .chips { gap: 8px; }
+  #app .chips button { min-width: 84px; padding: 9px 10px; border-radius: 14px; font-size: 13px; }
+  #app .chips button small { font-size: 11px; color: rgba(235,235,245,.6); font-variant-numeric: tabular-nums; }
+  #app .chips button.on small { color: rgba(255,255,255,.8); }
+  #app #shapes { gap: 2px; padding: 2px; border-radius: 10px; background: var(--fill); }
+  #app #shapes button { padding: 7px 4px; border-radius: 8px; background: transparent; font-size: 13px; }
+  #app #shapes button.lit { background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,.12), 0 3px 1px rgba(0,0,0,.04); }
+  #app #stage { border: none; border-radius: 20px; background: #1c1c1e; box-shadow: none; }
+  #app #stage.table { box-shadow: inset 0 0 0 2px var(--blue); }
+  #app #stage .hint { font-size: 12px; color: var(--gray); }
+  #app #readout { font: 500 13px ui-monospace, "SF Mono", Menlo, monospace; color: rgba(235,235,245,.6); }
+  #app .row, #app .geo { gap: 8px; }
+  #app .row button { font-size: 14px; padding: 12px 6px; }
+  #app .geo button { font-size: 12px; padding: 10px 4px; }
+  #app #sheathBar { border-radius: 12px; background: rgba(255,159,10,.22); color: var(--sysorange); }
+  #app #sheathFill { border-radius: 12px; background: rgba(255,159,10,.35); }
+  #app #vit { justify-content: space-between; padding: 10px 14px; margin-bottom: 6px; border-radius: 14px; background: #1c1c1e; font: 500 13px ui-monospace, "SF Mono", Menlo, monospace; color: rgba(235,235,245,.75); }
+  #app #vit.warn { color: var(--sysorange); } #app #vit.red { color: var(--sysred); }
+  /* Gerätekopf: man bedient eine Anlage – Symbol, Name, Raum, Verbindung */
+  #app .device { display: flex; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 12px; border-radius: 16px; background: #1c1c1e; }
+  #app .dicon { position: relative; width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(180deg, #3a3a3c, #2c2c2e); display: flex; align-items: center; justify-content: center; flex: none; }
+  #app .dicon .ic { width: 22px; height: 22px; color: #fff; }
+  #app .dicon .state { position: absolute; right: -2px; bottom: -2px; width: 11px; height: 11px; margin: 0; border: 2px solid #1c1c1e; }
+  #app .dmain { flex: 1; min-width: 0; }
+  #app .dname b { font-size: 17px; font-weight: 600; letter-spacing: -.02em; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  #app .dsub { font-size: 12px; color: var(--gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #app #logout { width: 34px; height: 34px; padding: 0 !important; border-radius: 999px; display: flex; align-items: center; justify-content: center; }
+  #app .ic { width: 18px; height: 18px; }
+  #app #stage .slabel { position: absolute; left: 14px; top: 10px; font-size: 10px; font-weight: 600; letter-spacing: .08em; color: var(--gray); pointer-events: none; }
+  /* Kacheln wie im Kontrollzentrum: Symbol oben, Text unten */
+  #app .tiles { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+  #app .tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 58px; padding: 8px 4px !important; border-radius: 16px !important; font-size: 11px !important; font-weight: 590; }
+  #app .tile .ic { width: 22px; height: 22px; }
+  #app .tile .l { line-height: 1.1; text-align: center; }
+  /* Gerätespezifische Befehle: nur sichtbar, wenn das aktive Instrument sie kann */
+  #app #devActs { display: none; } #app #devActs.on { display: grid; }
+  #app #devActs .tile { flex-direction: row; min-height: 48px; font-size: 13px !important; }
+  #app .imaging .tile.on { background: var(--blue); }
+  #app #bFluoro.on { background: var(--sysorange); color: #000; }
+  /* C-Bogen als Stepper: Minus · Bezeichnung · Plus */
+  #app .steppers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  #app .stepper { display: flex; align-items: center; height: 40px; border-radius: 12px; background: var(--fill); overflow: hidden; }
+  #app .stepper button { flex: none; width: 36px; height: 100%; padding: 0 !important; border-radius: 0 !important; background: transparent !important; display: flex; align-items: center; justify-content: center; }
+  #app .stepper button:active { background: var(--fill2) !important; transform: none; }
+  #app .stepper span { flex: 1; text-align: center; font-size: 11px; font-variant-numeric: tabular-nums; color: rgba(235,235,245,.6); white-space: nowrap; border-left: 1px solid rgba(255,255,255,.08); border-right: 1px solid rgba(255,255,255,.08); line-height: 40px; overflow: hidden; }
+  /* Gesten: kleine gespiegelte Vorschau der Frontkamera, Punkt = Griff zwischen Daumen und Zeigefinger */
+  /* Einstellungen als Blatt von unten, gruppierte Listen wie in den iOS-Einstellungen */
+  #menu { position: fixed; inset: 0; z-index: 20; display: none; background: rgba(0,0,0,.5); }
+  #menu.on { display: block; }
+  #menu .sheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88%; overflow: auto; background: #000; border-radius: 14px 14px 0 0; padding: 0 16px calc(24px + env(safe-area-inset-bottom)); }
+  #menu .shead { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; padding: 14px 0 8px; background: #000; z-index: 1; }
+  #menu .shead b { font-size: 17px; font-weight: 600; }
+  #menu button { font: inherit; color: #0a84ff; background: none; border: none; box-shadow: none; padding: 0; font-weight: 600; }
+  #menu .sec { margin: 18px 16px 6px; font-size: 13px; color: #8e8e93; text-transform: uppercase; letter-spacing: .02em; }
+  #menu .foot { margin: 6px 16px 0; font-size: 12px; color: #8e8e93; line-height: 1.35; }
+  #menu .group { background: #1c1c1e; border-radius: 12px; overflow: hidden; }
+  #menu .item { display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 16px; border-top: .5px solid rgba(84,84,88,.6); font-size: 16px; color: #fff; width: 100%; text-align: left; }
+  #menu .group > :first-child { border-top: none; }
+  #menu .item > span { flex: none; min-width: 112px; }
+  #menu .item em { font-style: normal; color: #8e8e93; font-size: 14px; min-width: 38px; text-align: right; font-variant-numeric: tabular-nums; }
+  #menu .item.link { color: #0a84ff; font-weight: 400; }
+  #menu input[type=range] { flex: 1; min-width: 0; accent-color: #0a84ff; }
+  #menu .sw { appearance: none; -webkit-appearance: none; margin-left: auto; width: 51px; height: 31px; border-radius: 16px; background: rgba(120,120,128,.32); position: relative; transition: background .2s; flex: none; }
+  #menu .sw::after { content: ''; position: absolute; left: 2px; top: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; transition: transform .2s; }
+  #menu .sw:checked { background: #30d158; } #menu .sw:checked::after { transform: translateX(20px); }
+  #menu .seg { display: flex; margin: 8px; padding: 2px; border-radius: 9px; background: rgba(118,118,128,.24); }
+  #menu .seg button { flex: 1; padding: 7px 4px; border-radius: 7px; color: #fff; font-size: 13px; }
+  #menu .seg button.on { background: #636366; }
+  #menu .bar { flex: 1; height: 6px; border-radius: 3px; background: rgba(118,118,128,.32); position: relative; overflow: visible; }
+  #menu .bar div { height: 100%; width: 0; border-radius: 3px; background: #8e8e93; }
+  #menu .bar div.grip { background: #0a84ff; }
+  #menu .bar i { position: absolute; top: -5px; width: 2px; height: 16px; background: #fff; border-radius: 1px; }
+  #app #bMenu { width: 34px; height: 34px; padding: 0 !important; border-radius: 999px; display: flex; align-items: center; justify-content: center; }
+  /* unsichtbarer echter Schalter unter Knöpfen (iPhone-Haptik) */
+  #app .tiles button, #app .stepper button, #app #hold { position: relative; }
+  .hx { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: .02; z-index: 2; }
+  /* Werte: was gerade übertragen wird – dezent unten im Katheterfeld */
+  #vals { position: absolute; left: 14px; right: 14px; bottom: 28px; display: flex; flex-direction: column; gap: 4px; pointer-events: none; z-index: 1; }
+  #vals .vr { display: flex; align-items: center; gap: 6px; font-size: 11px; transition: opacity .6s; } #vals .vr.dim { opacity: .55; }
+  #vals b { font-weight: 600; color: rgba(235,235,245,.55); min-width: 74px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #vals .vp { font: 500 11px ui-monospace, "SF Mono", Menlo, monospace; padding: 1px 7px; border-radius: 8px; background: rgba(118,118,128,.22); font-variant-numeric: tabular-nums; }
+  #vals .vp.off { color: rgba(235,235,245,.4); }
+  #vals em { font: 400 11px ui-monospace, "SF Mono", Menlo, monospace; font-style: normal; color: rgba(235,235,245,.4); }
+  #app #hold { display: flex; align-items: center; justify-content: center; gap: 6px; }
+</style>
+<script>window.CATHSIM_BUILD="20261017224108"</script></head>
+<body>
+<div id="connect">
+  <div class="brand"><span class="mark"></span>CathSim</div>
+  <input id="name" maxlength="24" autocomplete="given-name" placeholder="Dein Name">
+  <div id="scanBox" style="width:260px;height:260px;border-radius:18px;overflow:hidden;position:relative;background:#000;border:1px solid var(--line)">
+    <video id="cam" playsinline muted autoplay style="width:100%;height:100%;object-fit:cover"></video>
+    <div style="position:absolute;inset:24px;border:2px solid rgba(10,132,255,.8);border-radius:14px;pointer-events:none"></div>
+    <button id="camGo" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:none;padding:12px 18px"><svg class="ic"><use href="#ic-camera"/></svg> Kamera starten</button>
+    <div id="scanText" style="position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:11px;color:#fff;text-shadow:0 1px 2px #000;padding:0 8px">QR-Code der Station vor die Kamera halten</div>
+  </div>
+  <div style="color:var(--dim);font-size:12px">oder Code eintippen</div>
+  <input id="code" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="ABC123">
+  <button id="go" class="lit" style="width:260px;font-weight:600">Verbinden</button>
+  <div id="cstate" style="color:var(--dim);font-size:12px;min-height:1.4em"></div>
+  <div style="color:rgba(255,255,255,.35);font-size:11px;margin-top:20px;text-align:center">Tipp: über „Teilen“ und „Zum Home-Bildschirm“ wird daraus eine App ohne Browserleiste.</div>
+</div>
+<div id="app">
+  <div class="device">
+    <div class="dicon"><svg class="ic"><use href="#ic-monitor"/></svg><span class="state" id="state"></span></div>
+    <div class="dmain"><div class="dname"><b id="title">CathSim</b></div><div class="dsub">Angiographieanlage<span id="roomcode"></span><span id="me"></span></div></div>
+    <button id="bMenu" title="Einstellungen"><svg class="ic"><use href="#ic-sliders"/></svg></button>
+    <button id="logout" title="Trennen"><svg class="ic"><use href="#ic-logout"/></svg></button>
+  </div>
+  <div class="who" id="who"></div>
+  <div id="viewerNote">Du schaust zu – an der Station kann dich jemand zum Steuern auswählen.</div>
+  <div id="tip"></div><div id="alert"></div>
+  <div class="chips" id="chips"></div>
+  <div class="row" id="shapes" style="display:none"></div>
+  <div id="stage"><div class="slabel">KATHETER</div><canvas id="deck"></canvas><div id="readout"></div><div id="vals"></div><div class="hint" id="hint">nach links = vor · senkrecht torquen</div>
+    <video id="gcam" playsinline muted style="position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none"></video></div>
+  <div id="sheath"><button id="hold"><svg class="ic"><use href="#ic-hand"/></svg><span class="l">Stent halten</span></button><div id="sheathBar"><div id="sheathFill"></div><span id="sheathText">Applikator zurückziehen</span></div></div>
+  <div id="unsheath"></div>
+  <div class="tiles" id="devActs">
+    <button id="bAsp" class="tile wide"><svg class="ic"><use href="#ic-suck"/></svg><span class="l">Aspiration</span></button>
+    <button id="bDetach" class="tile wide"><svg class="ic"><use href="#ic-scissors"/></svg><span class="l">Coil ablösen</span></button>
+    <button id="bDeflate" class="tile wide"><svg class="ic"><use href="#ic-minus"/></svg><span class="l">Entleeren</span></button>
+    <button id="bInflate" class="tile wide"><svg class="ic"><use href="#ic-plus"/></svg><span class="l">Füllen</span></button>
+    <button id="bGlue" class="tile wide"><svg class="ic"><use href="#ic-drop"/></svg><span class="l">Kleber injizieren</span></button>
+  </div>
+  <div class="tiles">
+    <button id="bCouple" class="tile"><svg class="ic"><use href="#ic-link"/></svg><span class="l">koppeln</span></button>
+    <button id="bWithdraw" class="tile"><svg class="ic"><use href="#ic-eject"/></svg><span class="l">entfernen</span></button>
+    <button id="bFine" class="tile"><svg class="ic"><use href="#ic-dial"/></svg><span class="l">grob</span></button>
+    <button id="bTable" class="tile"><svg class="ic"><use href="#ic-table"/></svg><span class="l">Tisch</span></button>
+    <button id="bCenter" class="tile"><svg class="ic"><use href="#ic-target"/></svg><span class="l">Zentrieren</span></button>
+  </div>
+  <div class="tiles imaging">
+    <button id="bFluoro" class="tile"><svg class="ic"><use href="#ic-radiation"/></svg><span class="l">Fluoro</span></button>
+    <button id="bKM" class="tile"><svg class="ic"><use href="#ic-drop"/></svg><span class="l">KM</span></button>
+    <button id="bDSA" class="tile"><svg class="ic"><use href="#ic-camera2"/></svg><span class="l">Serie</span></button>
+    <button id="bRoad" class="tile"><svg class="ic"><use href="#ic-route"/></svg><span class="l">Roadmap</span></button>
+    <button id="bRot" class="tile"><svg class="ic"><use href="#ic-camera2"/></svg><span class="l">3D</span></button>
+  </div>
+  <div class="steppers">
+    <div class="stepper"><button data-lao="-5" aria-label="RAO"><svg class="ic"><use href="#ic-minus"/></svg></button><span id="stLao">LAO 0°</span><button data-lao="5" aria-label="LAO"><svg class="ic"><use href="#ic-plus"/></svg></button></div>
+    <div class="stepper"><button data-cra="-5" aria-label="CAUD"><svg class="ic"><use href="#ic-minus"/></svg></button><span id="stCra">CRAN 0°</span><button data-cra="5" aria-label="CRAN"><svg class="ic"><use href="#ic-plus"/></svg></button></div>
+    <div class="stepper"><button data-fov="30" aria-label="Bildfeld größer"><svg class="ic"><use href="#ic-zoomOut"/></svg></button><span id="stFov">FOV</span><button data-fov="-30" aria-label="Bildfeld kleiner"><svg class="ic"><use href="#ic-zoomIn"/></svg></button></div>
+  </div>
+  <div id="vit"><span>HF <span id="vHr">–</span></span><span>RR <span id="vRr">–</span></span><span>SpO₂ <span id="vSp">–</span></span><span>KM <span id="vKm">0</span> ml</span></div>
+</div>
+<div id="menu">
+  <div class="sheet">
+    <div class="shead"><b>Einstellungen</b><button id="mDone">Fertig</button></div>
+    <div class="sec">Steuerung</div>
+    <div class="group">
+      <div class="seg" id="mMode"><button data-mode="touch">Wischen</button><button data-mode="gest">Gesten (Kamera)</button></div>
+      <div class="item"><span>Wisch-Empfindlichkeit</span><input type="range" id="sSwipe" min="0.4" max="2" step="0.05"><em id="vSwipe"></em></div>
+    </div>
+    <div class="sec">Haptik</div>
+    <div class="group">
+      <label class="item"><span>Vibration</span><input type="checkbox" class="sw" id="sHap"></label>
+      <div class="item"><span>Stärke</span><input type="range" id="sHapStr" min="0.4" max="2" step="0.1"><em id="vHapStr"></em></div>
+      <label class="item"><span>Tick beim Vorschieben</span><input type="checkbox" class="sw" id="sHapPush"></label>
+      <label class="item"><span>Bass-Ton</span><input type="checkbox" class="sw" id="sSound"></label>
+    </div>
+    <div class="foot" id="hapNote"></div>
+    <div class="sec">Handerkennung</div>
+    <div class="group">
+      <div class="item meter"><span>Griff</span><div class="bar"><div id="mPinch"></div><i id="mThr"></i></div><em id="vPinch">–</em></div>
+      <div class="item"><span>Greifen ab</span><input type="range" id="sGrip" min="0.15" max="0.6" step="0.01"><em id="vGrip"></em></div>
+      <div class="item"><span>Vorschub</span><input type="range" id="sGPush" min="0.25" max="3" step="0.05"><em id="vGPush"></em></div>
+      <div class="item"><span>Drehung</span><input type="range" id="sGTwist" min="0.25" max="3" step="0.05"><em id="vGTwist"></em></div>
+      <div class="item"><span>Ruhe (Glättung)</span><input type="range" id="sGSmooth" min="0" max="0.85" step="0.05"><em id="vGSmooth"></em></div>
+      <label class="item"><span>Vorschub umkehren</span><input type="checkbox" class="sw" id="sGInv"></label>
+      <label class="item"><span>Kamerabild hinter den Kathetern</span><input type="checkbox" class="sw" id="sGPrev"></label>
+      <button class="item link" id="mReset">Standardwerte</button>
+    </div>
+    <div class="foot">Daumen und Zeigefinger zusammen = greifen. Die Leiste „Griff“ zeigt den aktuellen Abstand; greift es zu früh oder zu spät, die Schwelle verschieben. Bewegt wird immer das oben gewählte Instrument.</div>
+    <div class="foot" id="mBuild" style="margin-top:18px;text-align:center"></div>
+  </div>
+</div>
+<script src="icons.js?v=20261017224108"></script>
+<script src="vendor/mqtt.min.js"></script>
+<script src="vendor/jsQR.min.js"></script>
+<script src="config.js?v=20261017224108"></script>
+<script src="link.js?v=20261017224108"></script>
+<script src="controller.js?v=20261017224108"></script>
+</body>
+</html>
