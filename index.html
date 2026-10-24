@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CathSim Station</title>
+<link rel="stylesheet" href="style.css?v=20261024192814">
+<script>window.CATHSIM_BUILD="20261024192814"</script></head>
+<body>
+<div id="gate">
+<canvas id="gateCanvas" class="brainart" aria-hidden="true"></canvas>
+<div class="gwrap">
+  <section class="intro">
+    <div class="brand"><span class="mark"></span>CathSim</div>
+    <h1>Angiographie.<br><span>Realitätsnah simuliert.</span></h1>
+    <p class="lead">CathSim ist ein Angiographie-Simulator für den Browser. Du führst den Katheter durch die Gefäße und siehst ein Durchleuchtungsbild wie im Angiographie-Raum. Das Bild läuft auf dem großen Bildschirm, gesteuert wird mit dem Handy. So übst du Kathetertechniken realitätsnah.</p>
+  </section>
+  <div class="box">
+    <div id="gateUser">
+      <div class="gtabs"><button class="on" id="tabLogin">Anmelden</button><button id="tabReg">Registrieren</button></div>
+      <div id="gateLogin">
+        <div class="boxhead">Anmelden</div>
+        <div class="boxsub">E-Mail und dein Passwort</div>
+        <input id="user" type="text" autocomplete="username" placeholder="E-Mail">
+        <input id="code" type="password" autocomplete="current-password" placeholder="Passwort">
+        <div class="err" id="codeErr"></div>
+        <button class="primary" id="codeGo">Öffnen</button>
+      </div>
+      <div id="gateReg" style="display:none">
+        <div class="boxhead">Registrieren</div>
+        <div class="boxsub">Mit E-Mail und eigenem Passwort. Der Admin schaltet dich frei; deine Benutzergruppe mit ihrem Zugangscode öffnet die Module.</div>
+        <div class="two"><input id="regFirst" type="text" autocomplete="given-name" placeholder="Vorname"><input id="regLast" type="text" autocomplete="family-name" placeholder="Nachname"></div>
+        <input id="regEmail" type="email" autocomplete="email" placeholder="E-Mail">
+        <select id="regOrg" style="display:none"><option value="">Organisation wählen …</option></select>
+        <input id="regOrgNew" type="text" autocomplete="organization" placeholder="Name der Organisation" style="display:none">
+        <div class="two"><input id="regPw" type="password" autocomplete="new-password" placeholder="Passwort (mind. 8 Zeichen)"><input id="regPw2" type="password" autocomplete="new-password" placeholder="Passwort wiederholen"></div>
+        <div class="two" id="regGroupRow" style="display:none"><select id="regGroup"><option value="">Benutzergruppe wählen …</option></select><input id="regCode" type="text" autocomplete="off" placeholder="Zugangscode der Gruppe"></div>
+        <div class="err" id="regErr"></div>
+        <button class="primary" id="regGo">Registrierung senden</button>
+      </div>
+      <div id="gatePw" style="display:none">
+        <div class="boxhead">Eigenes Passwort festlegen</div>
+        <div class="boxsub">Dein Konto hat noch kein eigenes Passwort. Leg jetzt eines fest – ab dann meldest du dich damit an.</div>
+        <input id="pwNew" type="password" autocomplete="new-password" placeholder="Neues Passwort (mind. 8 Zeichen)">
+        <input id="pwNew2" type="password" autocomplete="new-password" placeholder="Passwort wiederholen">
+        <div class="err" id="pwErr"></div>
+        <button class="primary" id="pwGo">Speichern und öffnen</button>
+      </div>
+    </div>
+    <div id="gateAdmin" style="display:none">
+      <div class="boxhead">Verwaltung</div>
+      <div class="boxsub">E-Mail und Admin-Passwort</div>
+      <input id="adminEmail" type="email" autocomplete="username" placeholder="E-Mail">
+      <input id="adminPw" type="password" autocomplete="current-password" placeholder="Admin-Passwort">
+      <div class="err" id="adminErr"></div>
+      <button class="primary" id="adminGo">Anmelden</button>
+    </div>
+  </div>
+</div>
+<div id="gateNote" class="gatenote" style="display:none"></div>
+<button id="toAdmin" class="corner">Verwaltung</button>
+<button id="toUser" class="corner" style="display:none">Zurück</button>
+</div>
+<div id="loader">
+  <canvas id="loaderCanvas" class="brainart ld" aria-hidden="true"></canvas>
+  <div id="ldTicks" aria-hidden="true"></div>
+  <div id="ldText">Engine wird geladen …</div>
+  <div id="ldSub">Katheter, Drähte und ein echtes CT – einen Moment</div>
+</div>
+<div id="admin">
+  <div class="card glass" id="adminCard">
+    <div class="mhead"><svg class="ic"><use href="#ic-users"/></svg><b>Verwaltung</b><span style="flex:1;color:var(--dim);font-size:11px" id="adminWho"></span><button id="adminToStation">Zur Station</button><button id="adminLogout" title="Abmelden"><svg class="ic"><use href="#ic-logout"/></svg></button></div>
+    <div id="adminNote" class="gatenote" style="display:none;position:static;margin:10px 20px 0"></div>
+    <div class="atabs"><button class="on" data-atab="accounts">Konten</button><button data-atab="done">Übungen</button><button data-atab="logins">Anmeldungen</button><button data-atab="comments">Kommentare</button><button data-atab="codes">Module und Benutzergruppen</button></div>
+    <div class="mbody">
+      <div class="apane on" data-apane="accounts">
+        <h4>ANFRAGEN</h4>
+        <div id="adminPending" class="acc"></div>
+        <h4 style="margin-top:16px">FREIGESCHALTET</h4>
+        <div id="adminApproved" class="acc"></div>
+        <h4 style="margin-top:16px">ABGELEHNT</h4>
+        <div id="adminDeclined" class="acc"></div>
+        <div style="margin-top:20px;display:flex;gap:8px;align-items:center"><button id="adminClear" class="no">Alle Konten löschen</button><span style="font-size:11px;color:var(--dim)">entfernt alle Konten und Übungen; Gruppen, Codes und Sperren bleiben</span><span id="adminClearState" style="font-size:11px;color:var(--ok)"></span></div>
+      </div>
+      <div class="apane" data-apane="done">
+        <div class="s" style="color:var(--dim);margin-bottom:8px">Welche Übungen wer absolviert hat – je Person aufklappbar, mit Datum, Dauer, Durchleuchtung, Kontrastmittel und Komplikationen.</div>
+        <div id="adminDone" class="acc"></div>
+      </div>
+      <div class="apane" data-apane="codes">
+        <div class="s" style="color:var(--dim);margin-bottom:8px">Gesperrte Module sieht nur, wer zu einer Benutzergruppe gehört, der das Modul zugeordnet ist, oder am Konto freigegeben ist. Jede Benutzergruppe hat einen Zugangscode: Bei der Registrierung wählt man die Gruppe und gibt den Code ein; nachträglich geht es auch im Fallmenü. Ein Code kann ablaufen und begrenzt oft eingelöst werden.</div>
+        <h4>MODULE</h4>
+        <div id="lockList" class="acc"></div>
+        <h4 style="margin-top:16px">NEUE BENUTZERGRUPPE</h4>
+        <div class="codeform" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px">
+          <input id="codeLabel" type="text" placeholder="Name der Benutzergruppe, z. B. Neuro-Kurs WS 26/27" style="flex:2;min-width:200px">
+          <input id="codeCode" type="text" placeholder="Code (leer = zufällig)" style="flex:1;min-width:140px">
+          <label style="display:flex;flex-direction:column;font-size:10px;color:var(--dim)">Höchstzahl Konten<input id="codeMax" type="number" min="0" placeholder="0 = unbegrenzt" style="width:150px"></label>
+          <label style="display:flex;flex-direction:column;font-size:10px;color:var(--dim)">Zugang gültig bis<input id="codeExp" type="date" style="width:150px"></label>
+        </div>
+        <div id="codeModules" class="acc" style="margin-bottom:8px"></div>
+        <div style="display:flex;gap:8px;align-items:center"><button class="primary" id="codeAdd">Gruppe mit Code anlegen</button><span id="codeState" style="font-size:11px;color:var(--dim)"></span></div>
+        <h4 style="margin-top:16px">BENUTZERGRUPPEN UND CODES</h4>
+        <div id="codeList" class="acc"></div>
+        <div style="margin-top:12px"><button id="codeClear" class="no">Alle Benutzergruppen löschen</button></div>
+      </div>
+      <div class="apane" data-apane="access">
+        <div class="s" style="color:var(--dim);margin-bottom:8px">Welche Fälle eine Organisation sieht. Ohne Auswahl sind alle Fälle frei; mit Auswahl nur die angehakten. Personen ohne Organisation (alte Namensliste) sehen alles.</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><select id="accessOrg"></select><button id="accessAll">alle</button><button id="accessNone">keine</button><span id="accessState" style="font-size:11px;color:var(--dim)"></span></div>
+        <div id="accessList" class="acc"></div>
+      </div>
+      <div class="apane" data-apane="logins"><div id="adminLogins" class="logins"></div></div>
+      <div class="apane" data-apane="comments"><div id="adminComments" class="comments"></div></div>
+      <div class="apane" data-apane="legacy">
+        <div class="mside" style="flex:1">
+          <h4>NAMEN OHNE REGISTRIERUNG</h4>
+          <div class="s" style="color:var(--dim);margin-bottom:6px">Ein Name je Zeile. Diese Personen melden sich mit dem Namen und dem gemeinsamen Passwort an, ohne Registrierung.</div>
+          <textarea id="adminUsers" spellcheck="false"></textarea>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px"><button class="primary" id="adminSave">Speichern</button><span id="adminSaved" style="font-size:11px;color:var(--ok)"></span></div>
+        </div>
+        <div class="mside" style="flex:1">
+          <h4>ORGANISATIONEN</h4>
+          <div class="s" style="color:var(--dim);margin-bottom:6px">Eine je Zeile. Stehen bei der Registrierung zur Auswahl; neu eingetragene kommen von selbst dazu.</div>
+          <textarea id="adminOrgs" spellcheck="false"></textarea>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px"><button class="primary" id="adminOrgsSave">Speichern</button><span id="adminOrgsSaved" style="font-size:11px;color:var(--ok)"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="setup">
+  <div class="head glass">
+    <div class="brand"><span class="mark"></span>CathSim</div>
+    <div class="steps" id="steps"></div>
+    <button id="setupUser" class="who" title="Mein Fortschritt"></button>
+    <button id="adminOpen" style="display:none"><svg class="ic"><use href="#ic-users"/></svg> Verwaltung</button>
+    <button id="logout1" title="Abmelden"><svg class="ic"><use href="#ic-logout"/></svg> Abmelden</button>
+  </div>
+  <div class="pages">
+    <div class="page on" id="page0">
+      <div class="col cases">
+        <h3>FALL</h3>
+        <div class="domains" id="domains"></div>
+        <div id="cases"></div>
+      </div>
+      <div class="col" id="caseDetail"></div>
+    </div>
+    <div class="page" id="page1">
+      <div class="col"><h3>SCHWIERIGKEIT</h3><div id="difficulties"></div></div>
+      <div class="col"><h3>STARTPUNKT</h3><div id="stages"></div></div>
+    </div>
+    <div class="page" id="page2">
+      <div class="col"><h3>MATERIALTISCH</h3><div class="s" style="color:var(--dim);margin-bottom:10px">Was hier liegt, steht im Fall bereit. Nachlegen geht jederzeit über „Weiteres Material".</div><div id="tray"></div></div>
+    </div>
+    <div class="page" id="page3">
+      <div class="col" style="display:flex;align-items:center;justify-content:center">
+        <div class="mqr"><div class="qrbox"></div><div class="codebox"></div><div class="statebox"></div></div>
+      </div>
+      <div class="col">
+        <h3>HANDY ALS BEDIENFELD</h3>
+        <div class="mstep"><span class="n">1</span><span>Auf dem Handy die Controller-Seite öffnen – am einfachsten mit der Kamera-App den QR-Code scannen.</span></div>
+        <div class="mstep"><span class="n">2</span><span>Namen eingeben; der Code wird automatisch übernommen. Oder den Code eintippen.</span></div>
+        <div class="mstep"><span class="n">3</span><span>Hier antippen, wer steuern darf. Alle anderen schauen auf ihrem Handy zu.</span></div>
+        <div class="urlbox"></div>
+        <h4 style="font-size:9px;letter-spacing:.14em;color:var(--dim);margin:14px 0 4px">VERBUNDEN</h4>
+        <div class="whobox"></div>
+        <div class="s" style="color:var(--dim);margin-top:16px">Ohne Handy geht es auch: Tastatur und Maus an der Station steuern alles. Die Verbindung lässt sich später über „Handy verbinden" in der Seitenleiste nachholen.</div>
+        <h4 style="font-size:9px;letter-spacing:.14em;color:var(--dim);margin:18px 0 4px">ANMELDUNGEN</h4>
+        <div id="loginList" style="font-size:11px;line-height:1.6;max-height:160px;overflow:auto"></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="info" id="footInfo"></div>
+    <button id="back"><svg class="ic"><use href="#ic-chevL"/></svg> Zurück</button>
+    <button id="next">Weiter <svg class="ic"><use href="#ic-chevR"/></svg></button>
+    <button class="primary" id="start"><svg class="ic"><use href="#ic-play"/></svg> Fall starten</button>
+  </div>
+</div>
+
+<div id="station">
+  <div id="side" class="glass">
+    <div style="display:flex;align-items:center;gap:8px"><span class="brand" style="font-size:17px"><span class="mark" style="width:22px;height:22px"></span>CathSim</span><span style="flex:1"></span><button id="change">Fall wechseln</button><button id="logout2" title="Abmelden"><svg class="ic"><use href="#ic-logout"/></svg></button></div>
+    <div id="title" style="color:var(--dim);font-size:11px;margin-top:4px"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:2px"><div id="buildTag" style="color:rgba(255,255,255,.3);font-size:9px;font-family:'SF Mono',Menlo,monospace"></div><span style="flex:1"></span><button id="bNote" style="padding:3px 8px;background:none;border:none;box-shadow:none"><svg class="ic"><use href="#ic-chat"/></svg> Feedback zum Fall</button></div>
+    <div class="row" style="margin-top:8px"><button id="bLink"><svg class="ic"><use href="#ic-phone"/></svg> Handy verbinden</button><button id="bPlan"><svg class="ic"><use href="#ic-list"/></svg> Ablauf</button></div>
+    <div class="row" style="margin-top:5px"><button id="bDebrief"><svg class="ic"><use href="#ic-flag"/></svg> Stand des Falls</button></div>
+    <div id="linkWho"></div>
+    <div id="stats"></div>
+    <div id="ctSide">
+      <h4>SCHICHT</h4>
+      <div class="row" style="align-items:center;gap:8px"><span class="mono" style="font-size:10px;color:var(--dim)">kaudal</span><input type="range" id="ctY" min="-170" max="-40" step="1.5" value="-100" style="flex:1;accent-color:var(--accent)"><span class="mono" style="font-size:10px;color:var(--dim)">kranial</span></div>
+      <div class="info" id="ctYInfo"></div>
+      <div class="row seg3" id="ctWin" style="margin-top:6px"><button data-win="soft" class="lit">Weichteil</button><button data-win="lung">Lunge</button><button data-win="bone">Knochen</button></div>
+      <h4>1 · PLANUNG</h4>
+      <div id="ctPlan" class="info"></div>
+      <div class="row" style="margin-top:6px"><button id="ctResetPlan">Planung löschen</button></div>
+      <h4>2 · EINSTECHEN</h4>
+      <div class="row"><button id="ctStick" class="lit">Einstechen – erster Dreischuss</button></div>
+      <div id="ctStickInfo" class="info"></div>
+      <h4>3 · NADEL (BLIND)</h4>
+      <div class="row"><button id="ctBack"><svg class="ic"><use href="#ic-arrowL"/></svg> 5 mm zurück</button><button id="ctAdv" class="lit">5 mm vor <svg class="ic"><use href="#ic-arrowR"/></svg></button></div>
+      <div class="row" style="margin-top:5px"><button id="ctDown">kaudal kippen</button><button id="ctUp">kranial kippen</button></div>
+      <div id="ctNeedle" class="info"></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:4px">Tasten: Enter einstechen, Pfeil auf/ab Nadel, links/rechts kippen, Leertaste Dreischuss</div>
+      <h4>4 · DREISCHUSS</h4>
+      <div class="row"><button id="ctShot" class="lit">Dreischuss</button><button id="ctBiopsy">Biopsie entnehmen</button></div>
+      <div id="ctShotInfo" class="info"></div>
+      <div id="ctStats" class="ctstat"></div>
+      <div id="ctDone" class="info ok" style="display:none">Fall abgeschlossen – über „Anderen Fall wählen“ weiter.</div>
+    </div>
+    <div id="usSide">
+      <h4>SCHALLKOPF (ZWEITE HAND)</h4>
+      <div class="row"><button id="usProbeUp"><svg class="ic"><use href="#ic-arrowL"/></svg> kranial</button><button id="usProbeDown">kaudal <svg class="ic"><use href="#ic-arrowR"/></svg></button></div>
+      <div class="row" style="margin-top:5px"><button id="usTiltDown">kippen kaudal</button><button id="usTiltUp">kippen kranial</button><button id="usPress">Kompression (halten)</button></div>
+      <div id="usProbeInfo" class="info"></div>
+      <h4>NADEL</h4>
+      <div class="row"><button id="usBack"><svg class="ic"><use href="#ic-arrowL"/></svg> 3 mm zurück</button><button id="usAdv" class="lit">3 mm vor <svg class="ic"><use href="#ic-arrowR"/></svg></button></div>
+      <div class="row" style="margin-top:5px"><button id="usFlat">flacher</button><button id="usSteep">steiler</button><button id="usMed">medial</button><button id="usLat">lateral</button></div>
+      <div id="usNeedle" class="info"></div>
+      <div id="usBlood" class="info"></div>
+      <div id="usMsg" class="info"></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:4px">Tasten: Pfeil auf/ab Nadel, links/rechts seitlich, W/S Schallkopf, A/D kippen, Leertaste Kompression, +/− Winkel</div>
+      <h4>SELDINGER</h4>
+      <div class="row" id="usDevs"><button data-usdev="needle" class="lit">Nadel</button><button data-usdev="wire">Draht</button><button data-usdev="sheath">Schleuse</button></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:4px">Instrument wählen, dann „vor“/„zurück“ oder am Handy wischen: Draht durch die Nadel, Nadel über den Draht zurück, Schleuse über den Draht.</div>
+      <div id="usSeld" class="info"></div>
+      <div id="usStats" class="ctstat"></div>
+      <div id="usDone" class="info ok" style="display:none">Zugang liegt – über „Anderen Fall wählen“ weiter.</div>
+    </div>
+    <h4 class="ang">MATERIAL</h4>
+    <div id="devices"></div>
+    <div id="shapes" class="row" style="margin-top:6px"></div>
+    <select id="addDevice" style="width:100%;margin-top:6px"><option value="">Weiteres Material …</option></select>
+    <h4 class="ang">BEWEGUNG</h4>
+    <div class="row"><button data-adv="-5"><svg class="ic"><use href="#ic-arrowL"/></svg> zurück</button><button data-adv="5">vor <svg class="ic"><use href="#ic-arrowR"/></svg></button></div>
+    <div class="row" style="margin-top:5px"><button data-tq="-0.2"><svg class="ic"><use href="#ic-rotL"/></svg> torque</button><button data-tq="0.2">torque <svg class="ic"><use href="#ic-rotR"/></svg></button></div>
+    <div class="ang" style="font-size:10px;color:var(--dim);margin-top:4px">Tasten: Pfeil auf/ab schieben, links/rechts torquen, F fein, Tab wechseln</div>
+    <h4 class="ang">AKTIONEN</h4>
+    <div class="row"><button id="bFluoro">Fluoro</button><button id="bKM">KM</button><button id="bDSA">Exposure</button><button id="bRoad">Roadmap</button></div>
+    <div class="row" style="margin-top:5px"><button id="bRot">3D-Rotation</button><button id="bMaskOff">Maske aus</button></div>
+    <h4 id="seriesHead" style="display:none">SERIEN</h4>
+    <div id="seriesList"></div>
+    <div class="row" style="margin-top:5px" id="sheathRow"><button id="bSheathBack">Applikator 2 mm zurück</button></div>
+    <div class="row" style="margin-top:5px" id="balloonRow"><button id="bDeflate">Entleeren</button><button id="bInflate">Füllen</button></div>
+    <div class="row" style="margin-top:5px" id="glueRow"><button id="bGlue">Kleber injizieren (gedrückt halten)</button></div>
+    <div id="glueInfo" class="glueinfo"></div>
+    <div class="row" style="margin-top:5px"><button id="bAsp">Aspirieren</button><button id="bDetach">Coil ablösen</button><button id="bWithdraw">entfernen</button></div>
+    <h4>GEOMETRIE</h4>
+    <div class="rocker"><span class="lbl">Rotation</span><button data-lao="-5">RAO</button><span class="val" id="vLao"></span><button data-lao="5">LAO</button></div>
+    <div class="rocker"><span class="lbl">Angulation</span><button data-cra="-5">CAUD</button><span class="val" id="vCra"></span><button data-cra="5">CRAN</button></div>
+    <div class="row" id="fovs"></div>
+    <div class="row" style="margin-top:5px" id="planes"><button data-plane="0">1 Ebene</button><button data-plane="1">2 Ebenen</button><button data-plane="2">Auto</button></div>
+    <div class="row" style="margin-top:5px"><button id="bCenter">Zentrieren</button></div>
+    <h4>PROTOKOLL</h4>
+    <div class="events" id="events"></div>
+  </div>
+  <div id="view">
+    <canvas id="ctCanvas"></canvas>
+    <canvas id="usCanvas"></canvas>
+    <canvas id="fluoro"></canvas>
+    <canvas id="fluoroB"></canvas>
+    <canvas id="thumbCanvas" style="position:fixed;left:-400px;top:0;width:180px;height:180px;pointer-events:none"></canvas>
+    <div class="hud" id="labB"></div>
+    <div id="sv">
+      <canvas id="svCanvas"></canvas>
+      <div id="svLabel"></div>
+      <div id="svNav"><button id="svPrev" title="vorige Serie"><svg class="ic"><use href="#ic-chevL"/></svg></button><button id="svNext" title="nächste Serie"><svg class="ic"><use href="#ic-chevR"/></svg></button></div>
+      <div id="svBar"><button id="svPlay">▶︎</button><input type="range" id="svSlider" min="0" max="0" value="0"><span id="svInfo"></span><button id="svMeasure" title="Zwei Punkte antippen: Abstand · Doppelklick löscht">Messen</button><button id="svBest">Beste Maske</button><button id="svMask" class="lit">Als Maske</button><button id="svClose">Schließen</button></div>
+    </div>
+    <div id="v3d">
+      <canvas id="v3dCanvas"></canvas>
+      <canvas id="v3dOverlay"></canvas>
+      <div id="v3dLabel"></div>
+      <div id="v3dBar"><span id="v3dAng"></span><div class="seg3" id="v3dModes"><button data-mode="rotate" class="on">Drehen</button><button data-mode="pan">Verschieben</button><button data-mode="measure">Messen</button><button data-mode="cut">Schneiden</button></div><div class="seg3" id="v3dMeas" style="display:none"><button data-mt="dist" class="on">Strecke</button><button data-mt="angle">Winkel</button><button data-mt="cal">Kaliber</button></div><div class="colpick"><button id="v3dColBtn" title="Gefäßfarbe" style="--c:#c8232c"></button><div class="swatches" id="v3dColPop"><button data-col="red" class="on" style="--c:#c8232c"></button><button data-col="blue" style="--c:#0a84ff"></button><button data-col="bone" style="--c:#e6e1d6"></button><button data-col="green" style="--c:#30d158"></button><button data-col="amber" style="--c:#ff9f0a"></button></div></div><div class="v3dglass" title="Von der geschlossenen Gefäßwand bis zur Durchsicht"><span class="lbl">Wand</span><span class="track"><input type="range" id="v3dAlpha" min="0" max="100" value="45"><span class="ticks"><i></i><i></i><i></i><i></i><i></i></span></span><span class="lbl">Glas</span><span class="val" id="v3dGlassVal">GLAS 45 %</span></div><button id="v3dMesh" class="tog" title="Drahtgitter">Gitter</button><button id="v3dFlow" class="tog" title="Strömung: blau langsam, rot schnell">Fluss</button><button id="v3dReset" style="display:none">Zurücksetzen</button><span style="flex:1"></span><button id="v3dSug">Arbeitsprojektion</button><button id="v3dAdopt" class="lit">Projektion übernehmen</button><button id="v3dClose">Schließen</button></div>
+      <div id="v3dHint">Ziehen dreht · Rad/Pinch zoomt · Doppelklick setzt zurück</div>
+    </div>
+    <div id="msg"></div>
+    <div class="hud" id="hudTL"></div>
+    <div class="hud" id="hudTR"></div>
+    <div class="hud" id="hudBL"></div>
+    <div id="hudBR">
+      <div id="vitals"><canvas id="ecg" width="170" height="28"></canvas><span><span class="l">HF</span><span class="v" id="vHr"></span></span><span><span class="l">RR</span><span class="v" id="vRr"></span></span><span><span class="l">SpO₂</span><span class="v" id="vSp"></span></span></div>
+      <div id="badges"></div>
+    </div>
+  </div>
+  <div id="strip" class="glass"><h4>KOAXIAL</h4><canvas id="stripCanvas"></canvas><div id="stripLoc"></div></div>
+</div>
+<div id="progressModal" class="modal">
+  <div class="card glass mcard">
+    <div class="mhead"><svg class="ic"><use href="#ic-flag"/></svg><b>Mein Fortschritt und Einstellungen</b><span style="flex:1"></span><button id="progressClose" title="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button></div>
+    <div class="mbody mtext" id="progressBody"></div>
+  </div>
+</div>
+<div id="planModal" class="modal">
+  <div class="card glass mcard">
+    <div class="mhead"><svg class="ic"><use href="#ic-list"/></svg><b id="planTitle">Ablauf</b><span style="flex:1"></span><button id="planClose" title="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button></div>
+    <div class="mbody mtext" id="planBody"></div>
+  </div>
+</div>
+<div id="doneModal" class="modal">
+  <div class="card glass mcard">
+    <div class="mhead"><svg class="ic"><use href="#ic-flag"/></svg><b id="doneHead">Bilanz des Falls</b> · <span id="doneTitle" style="color:var(--dim);font-weight:500"></span><span style="flex:1"></span><button id="doneClose" title="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button></div>
+    <div class="mbody mtext" id="doneBody"></div>
+    <div class="row" style="padding:0 16px 16px"><button id="doneAgain">Anderen Fall wählen</button><button id="doneClose2" onclick="document.getElementById('doneModal').classList.remove('on')">Weiter im Bild</button></div>
+  </div>
+</div>
+<div id="linkModal">
+  <div class="card glass" id="linkCard">
+    <div class="mhead"><svg class="ic"><use href="#ic-phone"/></svg><b>Handy verbinden</b><span style="flex:1"></span><button id="linkClose" title="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button></div>
+    <div class="mbody">
+      <div class="mqr">
+        <div id="qr" class="qrbox"></div>
+        <div id="linkCode" class="codebox"></div>
+        <div id="linkState" class="statebox"></div>
+      </div>
+      <div class="mside">
+        <div class="mstep"><span class="n">1</span><span>Auf dem Handy die Controller-Seite öffnen – am einfachsten mit der Kamera-App den QR-Code scannen.</span></div>
+        <div class="mstep"><span class="n">2</span><span>Namen eingeben; der Code wird automatisch übernommen. Oder den Code eintippen.</span></div>
+        <div class="mstep"><span class="n">3</span><span>Hier antippen, wer steuern darf. Alle anderen schauen auf ihrem Handy zu.</span></div>
+        <div id="linkUrl" class="urlbox"></div>
+        <h4>VERBUNDEN</h4>
+        <div id="modalWho" class="whobox"></div>
+      </div>
+    </div>
+    <div class="mfoot"><button id="linkDrop"><svg class="ic"><use href="#ic-unlink"/></svg> Verbindung trennen</button><span style="flex:1"></span><button class="primary" id="linkDone">Fertig</button></div>
+  </div>
+</div>
+<div id="noteModal">
+  <div id="noteCard" class="glass">
+    <div style="display:flex;align-items:center;gap:8px"><svg class="ic" style="color:var(--accent)"><use href="#ic-chat"/></svg><b>Feedback zum Fall</b><span style="flex:1"></span><button id="noteClose" style="padding:5px 8px;border-radius:999px"><svg class="ic"><use href="#ic-close"/></svg></button></div>
+    <div id="noteCase" style="font-size:12px;color:var(--dim)"></div>
+    <textarea id="noteText" placeholder="Was fiel auf? Was fehlt, was stört, was war gut?"></textarea>
+    <div style="display:flex;align-items:center;gap:10px"><button class="primary" id="noteSend">Senden</button><span id="noteState" style="font-size:11px;color:var(--dim)">Geht direkt an Jonathan. Testphase.</span></div>
+  </div>
+</div>
+<div id="progress"></div><div id="loadtext"></div>
+<script src="ctcase.js?v=20261024192814"></script>
+<script src="usaccess.js?v=20261024192814"></script>
+<script src="icons.js?v=20261024192814"></script>
+<script src="vendor/mqtt.min.js"></script>
+<script src="vendor/qrcode.min.js"></script>
+<script src="config.js?v=20261024192814"></script>
+<script src="wasi.js?v=20261024192814"></script>
+<script src="link.js?v=20261024192814"></script>
+<script src="fluoro.js?v=20261024192814"></script>
+<script src="app.js?v=20261024192814"></script>
+<script src="brain-recon.js?v=20261024192814"></script>
+<script src="brain.js?v=20261024192814"></script>
+</body>
+</html>
