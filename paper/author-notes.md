@@ -25,7 +25,7 @@
 - Model/agent name and version; usage cost (session log / billing).
 - Effort figures. From the repository time stamps: session start about 13:07 UTC, first tested
   version committed 13:52 UTC on 24 Nov 2026 (about 45 min); the second request (department
-  branding, colour scheme, central rating storage, manuscript changes) took about [x] min — see
+  branding, colour scheme, central rating storage, manuscript changes) took about 14 min (13:55–14:08 UTC) — see
   the commit times. Human input: two free-text messages and three multiple-choice answers. These
   are bracketed in the text until confirmed against the session log. Reading and testing time of
   the author is not included and should be reported separately.

@@ -58,7 +58,7 @@ IQRs ([software]).
 ## Results
 
 The first tested version was available [45] minutes after the initial request; adaptation to a
-fictitious department and central rating storage took a further [x] minutes. Human effort
+fictitious department and central rating storage took a further [14] minutes. Human effort
 consisted of [2] free-text messages and three multiple-choice answers; usage cost was [x].
 Decoded pixel data were bit-identical to the reference toolkit in 58 of 61 test objects (95%);
 the three discrepant objects used color encodings absent from the test studies.
