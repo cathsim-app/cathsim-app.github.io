@@ -51,10 +51,10 @@ The decision to avoid a server was made because hosting was to stay within GitHu
 
 ## Colour scheme
 
-The interface uses neutral greys with a green accent, as requested to match *Radiology*. The
-journal's exact green could not be read from pubs.rsna.org (automated access is blocked) and is
-not in RSNA's public style guide, so the value in `pacs/config/site.json` (`accent`, `accentText`)
-is provisional. Replace it with the exact hex value and regenerate the figures.
+Accent colour of the interface and positive arm of Figure 2: `#47808d`, the value the RSNA style
+guide lists for *Radiology* (email design elements page, as returned by a web search; the page
+itself could not be opened from the build environment). The lighter tints are derived from it.
+Set in `pacs/config/site.json`.
 
 ## Authors
 

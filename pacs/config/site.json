@@ -6,8 +6,8 @@
     "en": "Department of Diagnostic and Interventional Radiology"
   },
   "fictitious": true,
-  "accent": "#00805a",
-  "accentText": "#4fd3a0",
+  "accent": "#47808d",
+  "accentText": "#8cc3cf",
   "ctPresets": [
     {
       "de": "Weichteil",

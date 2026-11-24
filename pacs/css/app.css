@@ -1,7 +1,7 @@
 :root {
-  /* Neutral reading-room greys with a green accent; the accent is overridden by config/site.json. */
+  /* Neutral reading-room greys with a accent taken from the RSNA style guide colour for Radiology; the accent is overridden by config/site.json. */
   --bg: #0c0c0e; --panel: #151518; --panel2: #1e1f23; --line: #303238; --text: #e6e6e9; --muted: #8e9199;
-  --accent: #00805a; --accent-text: #4fd3a0; --accent-ink: #ffffff; --ok: #4fbf8a; --warn: #e5ae4c; --err: #ff7a7a;
+  --accent: #47808d; --accent-text: #8cc3cf; --accent-ink: #ffffff; --ok: #4fbf8a; --warn: #e5ae4c; --err: #ff7a7a;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
