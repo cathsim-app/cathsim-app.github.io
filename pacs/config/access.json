@@ -1,0 +1,71 @@
+{
+ "version": 1,
+ "iterations": 310000,
+ "endpoint": "https://vibepacs-log.cathsim.workers.dev",
+ "users": [
+  {
+   "id": "admin",
+   "name": "Studienleitung",
+   "role": "admin",
+   "salt": "QIpqeHaO4dYUlICTt8Lf4g==",
+   "iv": "CfMZ0gcYHDudsIU/",
+   "ct": "nwLDynq7CDrIRSslGZTPzFEaNwXlbTbLa+7f3YOOGlv4HvhRTy3T0k/90Hg3TnJjsqczPZIZ97Hl4JvnsYtcN/IToFVUB2QPpn6f7yQURzu9AjtlMtqqetU9BxY="
+  },
+  {
+   "id": "reader01",
+   "name": "Reader 01",
+   "role": "reader",
+   "salt": "8TahrS3c0fv9wvOOLg9IPw==",
+   "iv": "y7SQ9pPoFkVRhmkE",
+   "ct": "2wbmpau2pEX3ftSfMv8AkXUUZKTn4Ob4JpyjMpsb29wSXcSmPEDzr0r/L5T+CYAhaSEfVmtqwAlmXAvi+YJCRU7Jh3w7wXDH5Uov/hCxRfn/ksjwM4RL9HMynGY="
+  },
+  {
+   "id": "reader02",
+   "name": "Reader 02",
+   "role": "reader",
+   "salt": "ZBI+imRdDsv/N6XIg7yeOQ==",
+   "iv": "vD1Hp0iRZiS2N/+2",
+   "ct": "rAgmzXR78fxqxftiyw94oM7t7+50HsQMSgakJkI5Ldsr4cvnzgvacfGvRY4N40YJDhl/0oQpNvL+uYLSRRVMh3Zi8+tMzH8+NkImwBgRlC1uIDGDt3cXfUeVt+c="
+  },
+  {
+   "id": "reader03",
+   "name": "Reader 03",
+   "role": "reader",
+   "salt": "GPfGQLSNO/NbHn6RqvIEiA==",
+   "iv": "ghRQIb+z/Chifo0h",
+   "ct": "pAujuu27kh/zGjjw1MtzCJuoJOksBLELe314PC5PTjC8hm4/iJamHSqmRmiK2oy4NpKd9z6cfjsojW9jWxJd0mZg5MrzJuVrngb+gkqU315QJcFsH0bWrUTDubU="
+  },
+  {
+   "id": "reader04",
+   "name": "Reader 04",
+   "role": "reader",
+   "salt": "4dDVAsk3xlMsYCI0R0k6ww==",
+   "iv": "VuuzgvLLAvRHNIaI",
+   "ct": "HuKHLSK8znfENpu5CmweHaOTxiRKfslIzqGtpONEjnhQsX8aRL+zs5wt8do/gxZNh7AMu8cB1qldJfKb8K9W78v6L0OFAkQJFJUbh9BzPP1Ta6DLtLmnneSuNYI="
+  },
+  {
+   "id": "reader05",
+   "name": "Reader 05",
+   "role": "reader",
+   "salt": "YhHncZSBVG+pgXYK/Kd4/w==",
+   "iv": "4eGvi8iBeMwQmRxk",
+   "ct": "F1IUDx9/MNHHSDGsKqbm6Yw64EQ0AL+Oq3diHuE13fH8+j//9eIzo9QHP+qNkkfvjYWODiyFuGaNTIaTmLC2/lTXryZEemaiGnG4rPjrvFVJ9cajq2q9AzEspQI="
+  },
+  {
+   "id": "reader06",
+   "name": "Reader 06",
+   "role": "reader",
+   "salt": "xfsyv6yHPaLuuPqHfYDr7A==",
+   "iv": "gxNr98jV/yBheLNY",
+   "ct": "P7QzHYAFs2+1ycctJkbhSsgeu364AejYzgeHzCd8iKdROgIDsZUFgFmscLFGxbBfiQ9uVVQSS3omenpBJgN2IbpLWq9JuSS0Q042X5/mdbKDadofsad4G191Vj0="
+  },
+  {
+   "id": "demo",
+   "name": "Demo (public)",
+   "role": "reader",
+   "salt": "6sokCPHC/A9ff9L1Thh4Eg==",
+   "iv": "LfuAZTvwvOw2mpaI",
+   "ct": "izYs+NcZGkI8b0RdZW8tQqCgcnA17w0J6HliuBw3"
+  }
+ ]
+}

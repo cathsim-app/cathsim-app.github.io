@@ -1,0 +1,20 @@
+{
+ "_warning": "FICTITIOUS illustrative data for layout only. Not study results. Replace with the export from the admin page before submission.",
+ "readers": 8, "residents": 3, "boardCertified": 5, "medianExperienceYears": 6,
+ "sus": { "mean": 74, "sd": 11 },
+ "tasks": [
+  { "id": "worklist", "label": "Worklist search", "ratings": [0,0,3,4,1], "completion": [8,0,0] },
+  { "id": "scroll", "label": "Scrolling and cine", "ratings": [0,1,5,2,0], "completion": [8,0,0] },
+  { "id": "window", "label": "Windowing", "ratings": [0,1,4,3,0], "completion": [8,0,0] },
+  { "id": "zoompan", "label": "Zoom, pan, rotate", "ratings": [0,1,5,2,0], "completion": [7,1,0] },
+  { "id": "length", "label": "Length and angle", "ratings": [0,2,4,2,0], "completion": [7,1,0] },
+  { "id": "roi", "label": "Attenuation (ROI)", "ratings": [0,1,5,2,0], "completion": [7,1,0] },
+  { "id": "mpr", "label": "MPR and MIP", "ratings": [2,4,2,0,0], "completion": [4,3,1] },
+  { "id": "compare", "label": "Prior comparison", "ratings": [1,3,3,1,0], "completion": [5,2,1] },
+  { "id": "multiseries", "label": "Multiseries MRI", "ratings": [0,3,4,1,0], "completion": [6,2,0] },
+  { "id": "radiograph", "label": "Radiograph", "ratings": [0,1,6,1,0], "completion": [8,0,0] },
+  { "id": "keyimage", "label": "Key image, annotation", "ratings": [0,2,4,2,0], "completion": [7,1,0] },
+  { "id": "report", "label": "Reporting", "ratings": [1,3,3,1,0], "completion": [5,2,1] },
+  { "id": "dicom", "label": "DICOM attributes", "ratings": [0,0,4,3,1], "completion": [7,1,0] }
+ ]
+}
