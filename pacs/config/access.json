@@ -1,0 +1,64 @@
+{
+ "version": 1,
+ "iterations": 310000,
+ "resultsRepo": null,
+ "resultsBranch": "main",
+ "users": [
+  {
+   "id": "admin",
+   "name": "Studienleitung",
+   "role": "admin",
+   "salt": "LzTg1MyRc1WB1frISkDEug==",
+   "iv": "wL74V/aFxlzP6/yP",
+   "ct": "kIJ9uoPURly2y1WM9MGnK5eM8nYP1ipYSsSLCVqS"
+  },
+  {
+   "id": "reader01",
+   "name": "Reader 01",
+   "role": "reader",
+   "salt": "gStKqfOrX7BjwKDOAuEdkg==",
+   "iv": "6Lw+j0sU3LdLHuew",
+   "ct": "apbjLxQTxTsNXfHU7rQ9GQ33TRHbsrbxj8fK6ME7"
+  },
+  {
+   "id": "reader02",
+   "name": "Reader 02",
+   "role": "reader",
+   "salt": "U9NvBeEqtLLnl73CM1fpRQ==",
+   "iv": "dETxRQL7AUInU65m",
+   "ct": "aMnrhgz6zxjyiztuYOyK9XcNcPRjoeP2edK/Dsgm"
+  },
+  {
+   "id": "reader03",
+   "name": "Reader 03",
+   "role": "reader",
+   "salt": "9jVCwQd7d37IAP4JPn69HA==",
+   "iv": "zcCW9hQcCWIVOqkS",
+   "ct": "zPJpniFkcotTQHLESLp+FJlMbYxXKZCMUzKhSG0m"
+  },
+  {
+   "id": "reader04",
+   "name": "Reader 04",
+   "role": "reader",
+   "salt": "gIIzEGvQ7N+MWdqjb5d7mA==",
+   "iv": "xICZh+hr8qKMAT0G",
+   "ct": "EJko4hjBGgzYvSNEwdqrEcl0vJ+DbEqijahNU/F5"
+  },
+  {
+   "id": "reader05",
+   "name": "Reader 05",
+   "role": "reader",
+   "salt": "QX/5xZT4CUwS2vMu2A5Hyg==",
+   "iv": "VNDUEn/2iIv2w3m5",
+   "ct": "CbfGntBmM1R3O3/eWVgFNImEqGW9KyQg1S2l9Egy"
+  },
+  {
+   "id": "reader06",
+   "name": "Reader 06",
+   "role": "reader",
+   "salt": "1Ak2RZ+5ysT5ujmujtHEJg==",
+   "iv": "2N+utRBtyMinK+MO",
+   "ct": "C6jDIWQpHl2aSwRpyZDwCOcNYLjA4QLj7OdK7bMz"
+  }
+ ]
+}
