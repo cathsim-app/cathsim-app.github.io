@@ -3,8 +3,8 @@
   "institution": "Lindenhöhe-Klinikum",
   "department": { "de": "Institut für Diagnostische und Interventionelle Radiologie", "en": "Department of Diagnostic and Interventional Radiology" },
   "fictitious": true,
-  "accent": "#c8102e",
-  "accentText": "#ff6b7f",
+  "accent": "#00805a",
+  "accentText": "#4fd3a0",
   "ctPresets": [
     { "de": "Weichteil", "en": "Soft tissue", "center": 40, "width": 400 },
     { "de": "Lunge", "en": "Lung", "center": -600, "width": 1500 },

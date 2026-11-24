@@ -1,7 +1,7 @@
 :root {
-  /* Neutral reading-room greys with a crimson accent; the accent is overridden by config/site.json. */
+  /* Neutral reading-room greys with a green accent; the accent is overridden by config/site.json. */
   --bg: #0c0c0e; --panel: #151518; --panel2: #1e1f23; --line: #303238; --text: #e6e6e9; --muted: #8e9199;
-  --accent: #c8102e; --accent-text: #ff6b7f; --accent-ink: #ffffff; --ok: #4fbf8a; --warn: #e5ae4c; --err: #ff7a7a;
+  --accent: #00805a; --accent-text: #4fd3a0; --accent-ink: #ffffff; --ok: #4fbf8a; --warn: #e5ae4c; --err: #ff7a7a;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -57,7 +57,7 @@ table { border-collapse: collapse; width: 100%; }
 table.wl th { position: sticky; top: 0; background: var(--panel2); text-align: left; font-weight: 600; font-size: 12px; color: var(--muted); padding: 8px 10px; cursor: pointer; white-space: nowrap; user-select: none; }
 table.wl td { padding: 8px 10px; border-top: 1px solid var(--line); white-space: nowrap; }
 table.wl td:nth-child(7) { white-space: normal; }
-table.wl tbody tr:hover { background: #1b1c20; } table.wl tbody tr.sel { background: #2a1a1e; }
+table.wl tbody tr:hover { background: #1b1c20; } table.wl tbody tr.sel { background: color-mix(in srgb, var(--accent) 20%, var(--bg)); }
 td.actions { text-align: right; }
 table.users input { width: 100%; }
 footer { padding-top: 8px; }
@@ -103,7 +103,7 @@ select.tb { font-size: 13px; max-width: 150px; }
 .series-group-title { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); padding: 6px 2px 4px; }
 .series-group-title small { display: block; text-transform: none; letter-spacing: 0; color: var(--muted); }
 .series { border: 1px solid var(--line); border-radius: 6px; margin-bottom: 6px; cursor: pointer; overflow: hidden; background: #000; }
-.series:hover { border-color: var(--muted); } .series.shown { border-color: #7a2a36; } .series.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.series:hover { border-color: var(--muted); } .series.shown { border-color: color-mix(in srgb, var(--accent) 55%, var(--bg)); } .series.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .thumb { height: 96px; display: grid; place-items: center; } .thumb canvas { height: 96px; width: 96px; }
 .series-info { background: var(--panel2); padding: 4px 6px; font-size: 11px; line-height: 1.3; } .series-info b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .series-info span { color: var(--muted); }
 .vp-grid { display: grid; gap: 2px; background: #26272b; min-height: 0; min-width: 0; }

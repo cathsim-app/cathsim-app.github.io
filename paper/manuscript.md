@@ -18,13 +18,12 @@ for standard PACS tasks as [RESULT].
 
 ## Introduction
 
-Picture archiving and communication systems (PACS) are among the most complex and costly software
-products in radiology and are developed by specialized vendors over many years. Large language
-model (LLM) coding agents now allow software to be created from natural-language instructions
-alone, so-called vibe coding, and radiologists have begun to build small workflow tools in this
-way (1). Whether the approach scales to a complete imaging application is unknown. We assessed the
-feasibility of generating an entire web-based PACS with an LLM coding agent and evaluated its
-usability for standard PACS tasks among radiologists.
+Picture archiving and communication systems (PACS) are complex, costly products developed by
+specialized vendors. Large language model (LLM) coding agents now create software from
+natural-language instructions alone ("vibe coding"), and radiologists have begun to build small
+workflow tools this way (1). Whether the approach scales to a complete imaging application is
+unknown. We assessed the feasibility of generating a web-based PACS with an LLM coding agent and
+its usability for standard PACS tasks.
 
 ## Materials and Methods
 
@@ -33,60 +32,50 @@ board statement]. Readers provided [informed consent].
 
 **System generation.** In November 2026, one radiologist instructed an LLM coding agent ([agent,
 model, version, manufacturer]) in plain language to build a complete PACS. The first request was
-one free-text paragraph, followed by three multiple-choice answers; a second paragraph requested
-adaptation to a department (institution name, color scheme, window presets) and central storage
-of reader ratings. No source code was written or edited by humans, and established viewer
-frameworks (2) were deliberately not used. Effort was taken from repository time stamps and the
-agent's usage log. The serverless application (approximately 3600 lines of JavaScript, no
-third-party runtime dependencies) comprises a DICOM parser and pixel decoders, archive index,
-worklist, multi-viewport viewer (windowing, measurements, multiplanar reformation, prior
-comparison), structured reporting, and password-encrypted accounts (Figure). It is hosted as
-static files on a free code-hosting service; ratings are stored by a free serverless function.
-Six studies (631 DICOM objects; CT, MRI, radiography) from the Imaging Data Commons (3) served as
-test data. Decoded pixel data were compared with an independent open-source toolkit.
+one paragraph plus three multiple-choice answers; a second paragraph requested adaptation to a
+department (name, color scheme, window presets) and central storage of ratings. No code was
+written or edited by humans, and existing viewer frameworks (2) were not used. Effort was taken
+from repository time stamps. The serverless application (approximately 3600
+lines of JavaScript, no third-party dependencies) comprises a DICOM parser and decoders, archive
+index, worklist, multi-viewport viewer (windowing, measurements, multiplanar reformation, prior
+comparison), structured reporting, and encrypted accounts (Figure), hosted on free services. Six studies (631 DICOM objects; CT, MRI, radiography) from the Imaging Data
+Commons (3) served as test data. Decoded pixels were compared with an independent toolkit.
 
 **Reader evaluation.** [N] radiologists ([n] residents, [n] board certified; median experience,
-[x] years) performed 13 predefined tasks covering core PACS functions (Table) in a web browser.
+[x] years) performed 13 predefined tasks (Table) in a web browser.
 For each task, completion and a five-point comparison with the reader's clinical PACS (1 = much
-worse, 3 = equivalent, 5 = much better) were recorded within the application. Readers then
-completed the System Usability Scale (SUS; range, 0–100) (4,5) and six five-point agreement
-items. Series load times were logged automatically.
-
-**Statistical analysis.** Data are reported descriptively as counts, means ± SDs, or medians with
-IQRs ([software]).
+worse, 3 = equivalent, 5 = much better) were recorded in the application. Readers then completed
+the System Usability Scale (SUS; range, 0–100) (4,5) and six five-point agreement items. Load
+times were logged. Data are reported descriptively.
 
 ## Results
 
-The first tested version was available [45] minutes after the initial request; adaptation to a
-fictitious department and central rating storage took a further [14] minutes. Human effort
-consisted of [2] free-text messages and three multiple-choice answers; usage cost was [x].
-Decoded pixel data were bit-identical to the reference toolkit in 58 of 61 test objects (95%);
-the three discrepant objects used color encodings absent from the test studies.
+The first tested version was available [45] minutes after the initial request; departmental
+adaptation and central rating storage took a further [14] minutes. Human effort comprised [2]
+free-text messages and three multiple-choice answers; usage cost was [x]. Decoded pixels were
+bit-identical to the reference toolkit in 58 of 61 test objects (95%).
 
 All [N] readers completed the evaluation. Of [13 × N] task attempts, [n] ([x]%) were completed
-without problems, [n] ([x]%) with difficulty, and [n] ([x]%) could not be completed. The median
-task rating relative to the clinical PACS was [x] (IQR, [x–x]), lowest for [task] and highest for
-[task] (Table). The mean SUS score was [x] ± [x]. [n] of [N] readers agreed that image quality was
-adequate for diagnostic viewing, and [n] could imagine clinical use given regulatory clearance.
-Median series load time was [x] seconds. Readers most often missed [functions].
+without problems, [n] ([x]%) with difficulty, and [n] ([x]%) not at all. The median rating
+relative to the clinical PACS was [x] (IQR, [x–x]), lowest for [task] and highest for [task]
+(Table). The mean SUS score was [x] ± [x]. [n] of [N] readers considered image quality adequate
+for diagnostic viewing, and [n] could imagine clinical use given regulatory clearance. Median
+series load time was [x] seconds. Readers most often missed [functions].
 
 ## Discussion
 
 An LLM coding agent generated a functional web-based PACS from two plain-language requests in
-[about 1 hour], and radiologists [could complete most standard tasks and rated its usability as
-…]. Generation and hosting cost [x], whereas commercial PACS entail substantial license,
-per-study, and maintenance costs [figure and source to be verified]. Because changes cost
-minutes rather than vendor change requests, a department could tailor presets, report templates,
-and appearance to its own workflow, as shown by the rebranding for a fictitious hospital. The
-cost comparison is incomplete: commercial prices cover integration, validated long-term storage,
-service, cybersecurity, and regulatory compliance. Diagnostic viewing software is a regulated
-medical device, and AI-generated code may contain security vulnerabilities that its users do not
-recognize (6). Limitations include a small curated data set, [a single center], no DICOM
-networking or information-system integration, no diagnostic accuracy assessment, and readers'
-awareness of the system's origin. In conclusion, vibe coding reduced the effort of creating and
-customizing imaging software to [about 1 hour], shifting the bottleneck from development to
-validation, security, and regulation. Teaching, research, and resource-limited settings are
-plausible first uses.
+[about 1 hour], and radiologists [completed most standard tasks and rated its usability as …].
+Generation and hosting cost [x], whereas commercial PACS entail substantial license and
+maintenance costs [source to be verified]. Because changes take minutes, a department could
+tailor presets, report templates, and appearance to its workflow, as shown by the rebranding for
+a fictitious hospital. The comparison is incomplete: commercial prices cover integration,
+validated storage, service, cybersecurity, and regulatory compliance. Diagnostic viewing software
+is a regulated medical device, and AI-generated code may contain unrecognized security
+vulnerabilities (6). Limitations include a small curated data set, no DICOM networking or
+information-system integration, no diagnostic accuracy assessment, and unblinded readers. In conclusion, vibe coding reduced the effort of creating and customizing imaging
+software to [about 1 hour], shifting the bottleneck from development to validation, security, and
+regulation.
 
 ## References
 

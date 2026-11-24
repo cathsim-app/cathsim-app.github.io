@@ -2,12 +2,12 @@
 
 ## Must be checked at the source before submission
 
-- **Journal limits.** The web research for this draft could not open pubs.rsna.org. Search
-  summaries gave 600 words, 6 references, up to 2 tables/figures, no more than 7 authors, sections
-  Introduction / Materials and Methods / Results / Discussion for a *Radiology* Research Letter;
-  one conflicting summary said 350 words / 5 references / no table (probably the Letters to the
-  Editor block). The draft follows the 600 / 6 / 2 version. Body text is currently about 700
-  words including placeholders and must be shortened once the results are in. Check https://pubs.rsna.org/page/radiology/author-instructions.
+- **Journal limits.** A web search restricted to pubs.rsna.org returned for *Radiology*
+  Research Letters: no more than 600 words of text, 6 references, up to 2 tables or figures, and
+  no more than 7 authors. The page itself could not be opened (the site blocks automated access),
+  so read it once before submission: https://pubs.rsna.org/page/radiology/author-instructions.
+  The body text is at the limit (595 words including placeholders); filled-in results must
+  not make it longer.
 - **Summary statement / key results.** Not confirmed for *Radiology* Research Letters.
 - **References.** None was verified on the publisher page; each is marked [verify]. Reference 1
   is the closest prior work and should be read in full.
@@ -44,9 +44,10 @@ The decision to avoid a server was made because hosting was to stay within GitHu
 
 ## Colour scheme
 
-The interface uses neutral greys with a crimson accent (#c8102e) chosen to resemble the journal's
-red. The exact brand colour could not be checked (publisher site not reachable from the build
-environment); it is one value in `pacs/config/site.json`.
+The interface uses neutral greys with a green accent, as requested to match *Radiology*. The
+journal's exact green could not be read from pubs.rsna.org (automated access is blocked) and is
+not in RSNA's public style guide, so the value in `pacs/config/site.json` (`accent`, `accentText`)
+is provisional. Replace it with the exact hex value and regenerate the figures.
 
 ## Authors
 
