@@ -2,6 +2,7 @@
 import { T, h, toast } from './util.js';
 import { currentUser, loadConfig } from './auth.js';
 import { loadIndex } from './archive.js';
+import { loadSite } from './site.js';
 import { audit, flushOutbox } from './store.js';
 import { loginScreen } from './ui/login.js';
 import { worklistScreen } from './ui/worklist.js';
@@ -34,6 +35,6 @@ window.addEventListener('error', (e) => { if (e.message) toast(T('Fehler: ', 'Er
 window.addEventListener('unhandledrejection', (e) => toast(T('Fehler: ', 'Error: ') + (e.reason?.message || e.reason), 'error', 6000));
 window.addEventListener('online', () => flushOutbox());
 
-await loadConfig();
+await Promise.all([loadConfig(), loadSite()]);
 if (currentUser()) { audit('session.resume'); flushOutbox(); }
 route();

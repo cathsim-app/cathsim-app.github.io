@@ -1,7 +1,7 @@
 // Authentication without a server.
 // Each account in config/access.json is an AES-GCM envelope whose key is derived
 // from the user's password (PBKDF2-SHA-256). A login succeeds only if the envelope
-// decrypts; the plaintext carries the (optional) GitHub token used to store results.
+// decrypts; the plaintext carries the (optional) credential for the central result store.
 const enc = new TextEncoder(), dec = new TextDecoder();
 const b64 = (u8) => btoa(String.fromCharCode(...u8));
 const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
@@ -61,7 +61,7 @@ export async function login(userId, password) {
   const payload = await openAccount(account || dummy, password, cfg.iterations || KDF_ITERATIONS);
   if (!account || !payload) return null;
   session = { id: account.id, name: account.name, role: account.role, token: payload.token || null,
-    repo: cfg.resultsRepo || null, branch: cfg.resultsBranch || 'main', loginAt: new Date().toISOString() };
+    endpoint: cfg.endpoint || null, loginAt: new Date().toISOString() };
   try { sessionStorage.setItem('vp.session', JSON.stringify(session)); } catch { /* ignore */ }
   return session;
 }
@@ -69,4 +69,11 @@ export async function login(userId, password) {
 export function logout() {
   session = null;
   try { sessionStorage.removeItem('vp.session'); } catch { /* ignore */ }
+}
+
+/** Upload credential of a user; must match credential() in worker/worker.js. */
+export async function uploadCredential(secret, id, role) {
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const mac = await crypto.subtle.sign('HMAC', key, enc.encode(`${id.toLowerCase()}|${role}`));
+  return [...new Uint8Array(mac)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }

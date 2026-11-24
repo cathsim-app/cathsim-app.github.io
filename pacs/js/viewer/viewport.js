@@ -276,10 +276,10 @@ export class Viewport {
     };
     const right = dir(1, 0), down = dir(0, 1), c = this.canvas, pad = 6 * this._dpr;
     const norm = (v) => scale(v, 1 / (Math.hypot(...v) || 1));
-    this._text(ctx, orientationLabel(norm(right)), c.width - pad, c.height / 2, '#9ad', 'right');
-    this._text(ctx, orientationLabel(scale(norm(right), -1)), pad, c.height / 2, '#9ad', 'left');
-    this._text(ctx, orientationLabel(scale(norm(down), -1)), c.width / 2, pad, '#9ad', 'center');
-    this._text(ctx, orientationLabel(norm(down)), c.width / 2, c.height - pad - 14 * this._dpr, '#9ad', 'center');
+    this._text(ctx, orientationLabel(norm(right)), c.width - pad, c.height / 2, '#c9cbd1', 'right');
+    this._text(ctx, orientationLabel(scale(norm(right), -1)), pad, c.height / 2, '#c9cbd1', 'left');
+    this._text(ctx, orientationLabel(scale(norm(down), -1)), c.width / 2, pad, '#c9cbd1', 'center');
+    this._text(ctx, orientationLabel(norm(down)), c.width / 2, c.height - pad - 14 * this._dpr, '#c9cbd1', 'center');
   }
 
   _drawScale(ctx) {

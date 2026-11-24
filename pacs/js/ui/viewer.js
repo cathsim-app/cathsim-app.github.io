@@ -8,13 +8,14 @@ import { thumbnail } from '../viewer/render.js';
 import { DICT, TRANSFER_SYNTAX } from '../dicom/dict.js';
 import { audit, countUse, toggleKeyImage, getKeyImages, getPrefs, setPref } from '../store.js';
 import { icon } from '../icons.js';
+import { getSite, loc } from '../site.js';
 import { reportPanel } from './report.js';
 import { taskPanel } from './evaluation.js';
 
-const CT_PRESETS = () => [
+const CT_PRESETS = () => (getSite().ctPresets?.length ? getSite().ctPresets.slice(0, 9).map((p) => [loc(p), Number(p.center), Number(p.width)]) : [
   [T('Weichteil', 'Soft tissue'), 40, 400], [T('Lunge', 'Lung'), -600, 1500], [T('Knochen', 'Bone'), 500, 2000],
   [T('Leber', 'Liver'), 70, 160], [T('Hirn', 'Brain'), 40, 80], [T('Mediastinum', 'Mediastinum'), 50, 350],
-];
+]);
 
 const TOOLS = () => [
   ['scroll', 'scroll', T('Blättern (S)', 'Scroll (S)')], ['wl', 'wl', T('Fensterung (W)', 'Window/level (W)')],
@@ -385,7 +386,7 @@ export function viewerScreen(root, studyUid, params, nav) {
     else if (k === 'k') keyImage();
     else if ((k === 'delete' || k === 'backspace') && vp) vp.deleteSelected();
     else if (k === 'escape' && vp) { vp.pending = null; vp.selected = null; vp.draw(); }
-    else if (/^[1-6]$/.test(k) && vp?.frame?.modality === 'CT') { const [, c, w] = CT_PRESETS()[Number(k) - 1]; vp.setWindow(c, w); countUse('preset'); }
+    else if (/^[1-9]$/.test(k) && vp?.frame?.modality === 'CT' && CT_PRESETS()[Number(k) - 1]) { const [, c, w] = CT_PRESETS()[Number(k) - 1]; vp.setWindow(c, w); countUse('preset'); }
     else used = false;
     if (used) e.preventDefault();
   }

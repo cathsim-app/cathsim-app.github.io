@@ -4,10 +4,13 @@ import { getReport, saveReport, countUse } from '../store.js';
 import { currentUser } from '../auth.js';
 import { REPORT_TEMPLATES } from '../protocol.js';
 import { icon } from '../icons.js';
+import { getSite, loc } from '../site.js';
 
 export function reportText(study, r) {
   const p = study.patient;
+  const site = getSite();
   return [
+    ...(site.institution ? [`${site.institution} · ${loc(site.department)}`, ''] : []),
     `${T('Patient', 'Patient')}: ${p.name} (ID ${p.id})${p.sex ? ', ' + p.sex : ''}${p.age ? ', ' + p.age : ''}`,
     `${T('Untersuchung', 'Study')}: ${study.modalities.join('/')} ${study.description || ''}, ${fmtDate(study.date)}, ${T('Auftrag', 'Acc.')} ${study.accession || '–'}`,
     '', `${T('KLINISCHE ANGABEN / FRAGESTELLUNG', 'CLINICAL INFORMATION')}\n${r.indication || '–'}`,
@@ -15,6 +18,7 @@ export function reportText(study, r) {
     '', `${T('BEFUND', 'FINDINGS')}\n${r.findings || '–'}`,
     '', `${T('BEURTEILUNG', 'IMPRESSION')}\n${r.impression || '–'}`,
     '', r.status === 'final' ? `${T('Freigegeben von', 'Finalized by')} ${r.authorName || r.author}, ${fmtDateTime(r.finalized)}` : T('ENTWURF – nicht freigegeben', 'DRAFT – not finalized'),
+    ...(loc(site.reportFooter) ? ['', loc(site.reportFooter)] : []),
   ].join('\n');
 }
 

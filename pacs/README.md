@@ -23,7 +23,7 @@ that you are not permitted to process on your own computer.**
 | Study | Task checklist with per-task ratings, System Usability Scale, overall items, usage and load-time telemetry, admin summary with CSV export |
 
 No framework, no build step, no third-party runtime dependency: plain ES modules
-(~3,400 lines). Everything runs in the browser; the only "server" is a static file host.
+(~3,600 lines). Everything runs in the browser; the only "server" is a static file host.
 
 ## Running
 
@@ -35,33 +35,27 @@ python3 -m http.server 8000      # then open http://localhost:8000/pacs/
 
 On GitHub Pages the app is served from `/pacs/` of the default branch.
 
-## Accounts and results (GitHub only, no backend)
+## Accounts and central results
 
 `config/access.json` contains one encrypted envelope per account
 (PBKDF2-SHA-256, 310,000 iterations → AES-256-GCM). A login succeeds only if the password
-decrypts the envelope, so no password or hash that could be tested offline cheaply is published.
-The envelope may additionally carry a GitHub token; if present, finalized reports and
-evaluations are written as JSON files to a results repository through the GitHub API.
-
-Create accounts either in the app (Admin → "Accounts and results repository") or with
+decrypts the envelope. The envelope also carries the user's upload credential for the result
+server in `worker/` (Cloudflare Worker + KV, see `worker/README.md`): evaluations and finalized
+reports are stored there; only admin accounts can read them (Admin → "Load from server", CSV export).
 
 ```
-node tools/make-access.mjs --repo OWNER/RESULTS-REPO --token github_pat_… \
+node tools/make-access.mjs --endpoint https://vibepacs-log.<account>.workers.dev --secret <STUDY_SECRET> \
      admin:Name:admin reader01:"Reader 01" reader02:"Reader 02"
 ```
 
-Passwords are printed once and never stored. Recommended set-up for the reader study:
+Passwords are printed once and never stored. Without a deployed worker the app falls back to
+local mode: the evaluation is kept in the browser, queued for upload and offered as a JSON file.
 
-1. Create a **private** repository for results (e.g. `vibepacs-results`) with one initial commit.
-2. Create a **fine-grained personal access token** restricted to that repository with
-   *Contents: Read and write* only, with an expiry date after the study.
-3. Generate `access.json` with that token and commit it to `pacs/config/`.
+## Adapting it to a department
 
-Security note: every reader who logs in can technically extract the token from their own
-browser session. It therefore must not grant anything beyond write access to the results
-repository. Without a token the app runs in local mode: evaluations are saved in the
-browser and downloaded as a JSON file that readers send to the study team; the admin page
-can merge such files.
+`config/site.json` sets product and institution name, accent colour, CT window presets and the
+report footer. The shipped example uses a fictitious hospital. Report templates and the
+evaluation protocol are in `js/protocol.js`.
 
 ## Demo data
 

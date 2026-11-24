@@ -1,7 +1,7 @@
 // Administration: create the encrypted access file, collect and summarise evaluations,
 // inspect the audit trail.
 import { T, h, toast, download, fmtDateTime, fmtNum } from '../util.js';
-import { sealAccount, randomPassword, loadConfig, KDF_ITERATIONS, currentUser } from '../auth.js';
+import { sealAccount, randomPassword, uploadCredential, loadConfig, KDF_ITERATIONS, currentUser } from '../auth.js';
 import { fetchAllRemote, remoteConfigured, getAudit, getEvaluation } from '../store.js';
 import { TASKS, OVERALL, susScore } from '../protocol.js';
 
@@ -16,9 +16,8 @@ export function adminScreen(root, nav) {
   let evaluations = [];
 
   // ----- access file ---------------------------------------------------------------
-  const repo = h('input', { type: 'text', placeholder: 'owner/results-repository' });
-  const branch = h('input', { type: 'text', value: 'main' });
-  const token = h('input', { type: 'password', placeholder: 'github_pat_…', autocomplete: 'off' });
+  const endpoint = h('input', { type: 'url', placeholder: 'https://vibepacs-log.<account>.workers.dev' });
+  const secret = h('input', { type: 'password', placeholder: 'STUDY_SECRET', autocomplete: 'off' });
   const userRows = h('tbody');
   const addUser = (id = '', name = '', role = 'reader') => {
     const tr = h('tr', h('td', h('input', { value: id, placeholder: 'reader01' })), h('td', h('input', { value: name, placeholder: T('Anzeigename', 'Display name') })),
@@ -27,7 +26,7 @@ export function adminScreen(root, nav) {
     userRows.append(tr);
   };
   loadConfig().then((c) => {
-    repo.value = c.resultsRepo || ''; branch.value = c.resultsBranch || 'main';
+    endpoint.value = c.endpoint || '';
     (c.users?.length ? c.users : [{ id: 'admin', name: 'Admin', role: 'admin' }]).forEach((u) => addUser(u.id, u.name, u.role));
   });
   const pwOut = h('pre.pw-out');
@@ -35,10 +34,10 @@ export function adminScreen(root, nav) {
     const users = [...userRows.children].map((tr) => { const i = tr.querySelectorAll('input, select'); return { id: i[0].value.trim(), name: i[1].value.trim() || i[0].value.trim(), role: i[2].value, password: i[3].value }; }).filter((u) => u.id);
     if (!users.length || users.some((u) => u.password.length < 10)) { toast(T('Mindestens ein Zugang; Passwörter ≥ 10 Zeichen.', 'At least one account; passwords ≥ 10 characters.'), 'warn'); return; }
     if (new Set(users.map((u) => u.id.toLowerCase())).size !== users.length) { toast(T('Kennungen müssen eindeutig sein.', 'User IDs must be unique.'), 'warn'); return; }
-    if (token.value && !/^[\w.-]+\/[\w.-]+$/.test(repo.value.trim())) { toast(T('Repository als owner/name angeben.', 'Give the repository as owner/name.'), 'warn'); return; }
+    if (secret.value && !/^https:\/\/[\w.-]+/.test(endpoint.value.trim())) { toast(T('Adresse des Ergebnis-Servers angeben (https://…).', 'Enter the result server address (https://…).'), 'warn'); return; }
     const sealed = [];
-    for (const u of users) sealed.push(await sealAccount(u, u.password, { token: token.value.trim() || null }));
-    const cfg = { version: 1, iterations: KDF_ITERATIONS, resultsRepo: token.value ? repo.value.trim() : null, resultsBranch: branch.value.trim() || 'main', users: sealed };
+    for (const u of users) sealed.push(await sealAccount(u, u.password, { token: secret.value ? await uploadCredential(secret.value, u.id, u.role) : null }));
+    const cfg = { version: 1, iterations: KDF_ITERATIONS, endpoint: secret.value ? endpoint.value.trim() : null, users: sealed };
     download('access.json', JSON.stringify(cfg, null, 1));
     pwOut.textContent = users.map((u) => `${u.id}\t${u.password}\t(${u.role})`).join('\n');
     toast(T('access.json erzeugt – nach pacs/config/access.json committen. Passwörter jetzt sichern!', 'access.json created – commit it to pacs/config/access.json. Save the passwords now!'), 'ok', 8000);
@@ -53,7 +52,7 @@ export function adminScreen(root, nav) {
   async function loadRemote() {
     try {
       const all = await fetchAllRemote();
-      evaluations = all.map((x) => x.data).filter((d) => d.schema?.startsWith('vibepacs-evaluation'));
+      evaluations = all.filter((r) => r.kind === 'evaluation').map((r) => r.data).filter((e) => e.schema?.startsWith('vibepacs-evaluation'));
       toast(`${evaluations.length} ${T('Bewertungen geladen', 'evaluations loaded')}`, 'ok');
     } catch (e) { toast(T('Abruf fehlgeschlagen: ', 'Fetch failed: ') + e.message, 'error'); }
     renderResults();
@@ -103,13 +102,13 @@ export function adminScreen(root, nav) {
   page.append(
     h('header.page-head', h('button.back', { onclick: () => nav('#/worklist') }, '‹ ' + T('Arbeitsliste', 'Worklist')), h('h1', T('Verwaltung', 'Administration'))),
     h('section', h('h2', T('Ergebnisse der Reader-Studie', 'Reader study results')),
-      h('div.row', h('button.primary', { disabled: !remoteConfigured(), onclick: loadRemote }, T('Aus Ergebnis-Repository laden', 'Load from results repository')),
+      h('div.row', h('button.primary', { disabled: !remoteConfigured(), onclick: loadRemote }, T('Vom Server laden', 'Load from server')),
         addFiles, h('button', { onclick: () => addFiles.click() }, T('Bewertungsdateien hinzufügen (.json)', 'Add evaluation files (.json)')),
         h('button', { onclick: () => { const e = getEvaluation(); if (e.submitted) { evaluations.push(e); renderResults(); } else toast(T('Keine eigene Bewertung abgeschickt.', 'No own evaluation submitted.'), 'warn'); } }, T('Eigene Bewertung hinzufügen', 'Add own evaluation'))),
       results),
-    h('section', h('h2', T('Zugänge und Ergebnis-Repository', 'Accounts and results repository')),
-      h('p.muted', T('Erzeugt die Datei config/access.json. Jeder Zugang ist ein mit dem Passwort verschlüsselter Umschlag (PBKDF2 + AES-GCM); das optionale GitHub-Token liegt nur verschlüsselt im Repository. Verwenden Sie ein „fine-grained“ Token, das ausschließlich Schreibrechte (Contents) auf ein privates Ergebnis-Repository hat.', 'Creates config/access.json. Each account is an envelope encrypted with its password (PBKDF2 + AES-GCM); the optional GitHub token is stored only in encrypted form. Use a fine-grained token restricted to Contents write access on one private results repository.')),
-      h('div.form-grid', h('label', T('Ergebnis-Repository', 'Results repository')), repo, h('label', 'Branch'), branch, h('label', 'GitHub-Token'), token),
+    h('section', h('h2', T('Zugänge und Ergebnis-Server', 'Accounts and result server')),
+      h('p.muted', T('Erzeugt die Datei config/access.json. Jeder Zugang ist ein mit dem Passwort verschlüsselter Umschlag (PBKDF2 + AES-GCM). Mit Server-Adresse und Studien-Secret (wie im Worker hinterlegt) erhält jeder Zugang ein eigenes Upload-Kennwort; ohne Secret läuft die Installation im lokalen Modus.', 'Creates config/access.json. Each account is an envelope encrypted with its password (PBKDF2 + AES-GCM). With the server address and the study secret (as stored in the worker) each account receives its own upload credential; without a secret the installation runs in local mode.')),
+      h('div.form-grid', h('label', T('Ergebnis-Server', 'Result server')), endpoint, h('label', T('Studien-Secret', 'Study secret')), secret),
       h('table.wl.users', h('thead', h('tr', [T('Kennung', 'User ID'), 'Name', T('Rolle', 'Role'), T('Passwort', 'Password'), ''].map((c) => h('th', c)))), userRows),
       h('div.row', h('button', { onclick: () => addUser(`reader${String(userRows.children.length).padStart(2, '0')}`, `Reader ${userRows.children.length}`) }, T('+ Zugang', '+ Account')),
         h('button.primary', { onclick: makeAccess }, T('access.json erzeugen', 'Create access.json'))),

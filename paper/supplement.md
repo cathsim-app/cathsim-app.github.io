@@ -5,12 +5,13 @@
 | Component | Implementation |
 |---|---|
 | Hosting | Static files on GitHub Pages; no application server, no database |
-| Code | Approximately 3400 lines of JavaScript (ES modules), HTML, CSS; no third-party runtime dependency, no build step |
+| Code | Approximately 3600 lines of JavaScript (ES modules), HTML, CSS; no third-party runtime dependency, no build step |
 | DICOM parsing | Implicit/Explicit VR Little Endian, Explicit VR Big Endian, Deflated Explicit VR; nested sequences; encapsulated pixel data |
 | Pixel decoding | Native 8/16/32 bit, RLE Lossless, JPEG Lossless (Process 14), baseline JPEG (browser decoder), palette color, RGB/YBR_FULL |
 | Archive | Unmodified DICOM Part 10 objects (gzip transport) with a JSON index created by an ingestion tool; local import into browser storage |
 | Access control | Per-account envelope, PBKDF2-SHA-256 (310 000 iterations) and AES-256-GCM |
-| Result storage | Browser storage; optional upload of reports and evaluations to a private repository through the GitHub API |
+| Result storage | Browser storage; evaluations and finalized reports are sent to a serverless function with a key-value store (Cloudflare Worker, free tier); per-user HMAC credentials |
+| Site customisation | One configuration file: product and institution name, accent color, CT window presets, report footer |
 
 Verification: header values and decoded pixels were compared with pydicom on 61 objects (demo
 series and pydicom test files; six transfer syntaxes). Fifty-eight were bit-identical. Differences:
@@ -55,7 +56,8 @@ comparison with the clinical PACS and three free-text fields (missing functions,
 
 | Item | AI-generated system | Commercial PACS |
 |---|---|---|
-| Development | [agent usage cost]; [x] h of one radiologist | included in licence |
+| Development | [agent usage cost]; two written requests, about [1] h agent runtime | included in licence |
+| Departmental customisation | one written request, [x] min | vendor change request [source needed] |
 | Hosting, 1 year | 0 (static hosting, demo scale) | [source needed] |
 | Licence / per-study fee | none | [source needed] |
 | Maintenance | none contracted | [source needed] |

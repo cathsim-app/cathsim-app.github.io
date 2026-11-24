@@ -73,8 +73,8 @@ export function evaluationScreen(root, nav) {
         h('label', T('Aufgetretene Fehler / Probleme', 'Errors / problems encountered')), h('textarea', { rows: 3, value: ev.overall.bugs || '', oninput: (e) => { ev.overall.bugs = e.target.value; saveEvaluation(ev); } }),
         h('label', T('Weitere Anmerkungen', 'Further comments')), h('textarea', { rows: 3, value: ev.overall.comments || '', oninput: (e) => { ev.overall.comments = e.target.value; saveEvaluation(ev); } })),
       h('section.submit',
-        h('p.muted', remoteConfigured() ? T('Beim Abschicken wird die Bewertung pseudonymisiert (nur Kennung) in das Ergebnis-Repository der Studie übertragen.', 'On submission the evaluation is transferred under your reader code to the study results repository.')
-          : T('Für diese Installation ist kein Ergebnis-Repository eingerichtet. Die Bewertung wird im Browser gespeichert und als Datei heruntergeladen – bitte senden Sie diese Datei an die Studienleitung.', 'No results repository is configured for this installation. The evaluation is saved in the browser and downloaded as a file – please send this file to the study team.')),
+        h('p.muted', remoteConfigured() ? T('Beim Abschicken wird die Bewertung pseudonymisiert (nur Kennung) an den Ergebnis-Server der Studie übertragen.', 'On submission the evaluation is transferred under your reader code to the study result server.')
+          : T('Für diese Installation ist kein Ergebnis-Server eingerichtet. Die Bewertung wird im Browser gespeichert und als Datei heruntergeladen – bitte senden Sie diese Datei an die Studienleitung.', 'No result server is configured for this installation. The evaluation is saved in the browser and downloaded as a file – please send this file to the study team.')),
         h('button.primary.big', { onclick: async () => {
           const m = missing();
           if (m.length && !window.confirm(T('Es fehlen noch: ', 'Still missing: ') + m.join(', ') + T('. Trotzdem abschicken?', '. Submit anyway?'))) return;

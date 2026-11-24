@@ -1,6 +1,6 @@
 // Persistence for user-generated data (reports, annotations, key images, ratings,
 // audit trail). Everything is kept in the browser (localStorage, per user) and, if a
-// results repository is configured, additionally written to GitHub as JSON files.
+// result server is configured, evaluations and finalized reports are also stored centrally.
 import { currentUser } from './auth.js';
 
 const mem = {};
@@ -13,45 +13,29 @@ function write(key, value) {
 }
 const ns = (name) => `vp.${currentUser()?.id || 'anon'}.${name}`;
 
-// --- GitHub results repository ---------------------------------------------
-const b64utf8 = (s) => { const u = new TextEncoder().encode(s); let o = ''; for (const b of u) o += String.fromCharCode(b); return btoa(o); };
+// --- central result store (Cloudflare Worker, see worker/) --------------------------------
+export function remoteConfigured() { const u = currentUser(); return !!(u?.token && u?.endpoint); }
 
-export function remoteConfigured() { const u = currentUser(); return !!(u?.token && u?.repo); }
-
-async function gh(path, opts = {}) {
+async function api(path, opts = {}) {
   const u = currentUser();
-  const r = await fetch(`https://api.github.com/repos/${u.repo}/${path}`, {
+  const r = await fetch(u.endpoint.replace(/\/+$/, '') + path, {
     ...opts,
-    headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${u.token}`, 'X-GitHub-Api-Version': '2022-11-28', ...(opts.headers || {}) },
+    headers: { 'content-type': 'application/json', 'x-user': u.id, 'x-role': u.role, 'x-token': u.token, ...(opts.headers || {}) },
   });
-  if (!r.ok) throw new Error(`GitHub ${r.status}`);
-  return r.status === 204 ? null : r.json();
+  if (!r.ok) throw new Error(`Server ${r.status}`);
+  return r.json();
 }
 
-/** Writes a new JSON file to the results repository. Returns true on success. */
+/** Stores one record centrally. Returns true on success. */
 export async function pushRemote(kind, data) {
   if (!remoteConfigured()) return false;
-  const u = currentUser();
-  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const path = `results/${u.id}/${kind}-${stamp}.json`;
-  await gh(`contents/${path}`, { method: 'PUT', body: JSON.stringify({
-    message: `${kind} from ${u.id}`, branch: u.branch, content: b64utf8(JSON.stringify(data, null, 1)) }) });
+  await api('/submit', { method: 'POST', body: JSON.stringify({ kind, data }) });
   return true;
 }
 
-/** Reads every result file (admin evaluation). */
+/** Reads every stored record (admin evaluation). */
 export async function fetchAllRemote() {
-  const u = currentUser();
-  const tree = await gh(`git/trees/${encodeURIComponent(u.branch)}?recursive=1`);
-  const files = tree.tree.filter((t) => t.type === 'blob' && /^results\/.+\.json$/.test(t.path));
-  const out = [];
-  for (const f of files) {
-    const blob = await gh(`git/blobs/${f.sha}`);
-    const bin = atob(blob.content.replace(/\n/g, ''));
-    const text = new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
-    try { out.push({ path: f.path, data: JSON.parse(text) }); } catch { /* skip malformed */ }
-  }
-  return out;
+  return (await api('/admin/results')).rows;
 }
 
 // Outbox: uploads that failed (offline, rate limit) are retried on the next occasion.

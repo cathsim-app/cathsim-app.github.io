@@ -1,64 +1,63 @@
 {
  "version": 1,
  "iterations": 310000,
- "resultsRepo": null,
- "resultsBranch": "main",
+ "endpoint": "https://vibepacs-log.cathsim.workers.dev",
  "users": [
   {
    "id": "admin",
    "name": "Studienleitung",
    "role": "admin",
-   "salt": "LzTg1MyRc1WB1frISkDEug==",
-   "iv": "wL74V/aFxlzP6/yP",
-   "ct": "kIJ9uoPURly2y1WM9MGnK5eM8nYP1ipYSsSLCVqS"
+   "salt": "QIpqeHaO4dYUlICTt8Lf4g==",
+   "iv": "CfMZ0gcYHDudsIU/",
+   "ct": "nwLDynq7CDrIRSslGZTPzFEaNwXlbTbLa+7f3YOOGlv4HvhRTy3T0k/90Hg3TnJjsqczPZIZ97Hl4JvnsYtcN/IToFVUB2QPpn6f7yQURzu9AjtlMtqqetU9BxY="
   },
   {
    "id": "reader01",
    "name": "Reader 01",
    "role": "reader",
-   "salt": "gStKqfOrX7BjwKDOAuEdkg==",
-   "iv": "6Lw+j0sU3LdLHuew",
-   "ct": "apbjLxQTxTsNXfHU7rQ9GQ33TRHbsrbxj8fK6ME7"
+   "salt": "8TahrS3c0fv9wvOOLg9IPw==",
+   "iv": "y7SQ9pPoFkVRhmkE",
+   "ct": "2wbmpau2pEX3ftSfMv8AkXUUZKTn4Ob4JpyjMpsb29wSXcSmPEDzr0r/L5T+CYAhaSEfVmtqwAlmXAvi+YJCRU7Jh3w7wXDH5Uov/hCxRfn/ksjwM4RL9HMynGY="
   },
   {
    "id": "reader02",
    "name": "Reader 02",
    "role": "reader",
-   "salt": "U9NvBeEqtLLnl73CM1fpRQ==",
-   "iv": "dETxRQL7AUInU65m",
-   "ct": "aMnrhgz6zxjyiztuYOyK9XcNcPRjoeP2edK/Dsgm"
+   "salt": "ZBI+imRdDsv/N6XIg7yeOQ==",
+   "iv": "vD1Hp0iRZiS2N/+2",
+   "ct": "rAgmzXR78fxqxftiyw94oM7t7+50HsQMSgakJkI5Ldsr4cvnzgvacfGvRY4N40YJDhl/0oQpNvL+uYLSRRVMh3Zi8+tMzH8+NkImwBgRlC1uIDGDt3cXfUeVt+c="
   },
   {
    "id": "reader03",
    "name": "Reader 03",
    "role": "reader",
-   "salt": "9jVCwQd7d37IAP4JPn69HA==",
-   "iv": "zcCW9hQcCWIVOqkS",
-   "ct": "zPJpniFkcotTQHLESLp+FJlMbYxXKZCMUzKhSG0m"
+   "salt": "GPfGQLSNO/NbHn6RqvIEiA==",
+   "iv": "ghRQIb+z/Chifo0h",
+   "ct": "pAujuu27kh/zGjjw1MtzCJuoJOksBLELe314PC5PTjC8hm4/iJamHSqmRmiK2oy4NpKd9z6cfjsojW9jWxJd0mZg5MrzJuVrngb+gkqU315QJcFsH0bWrUTDubU="
   },
   {
    "id": "reader04",
    "name": "Reader 04",
    "role": "reader",
-   "salt": "gIIzEGvQ7N+MWdqjb5d7mA==",
-   "iv": "xICZh+hr8qKMAT0G",
-   "ct": "EJko4hjBGgzYvSNEwdqrEcl0vJ+DbEqijahNU/F5"
+   "salt": "4dDVAsk3xlMsYCI0R0k6ww==",
+   "iv": "VuuzgvLLAvRHNIaI",
+   "ct": "HuKHLSK8znfENpu5CmweHaOTxiRKfslIzqGtpONEjnhQsX8aRL+zs5wt8do/gxZNh7AMu8cB1qldJfKb8K9W78v6L0OFAkQJFJUbh9BzPP1Ta6DLtLmnneSuNYI="
   },
   {
    "id": "reader05",
    "name": "Reader 05",
    "role": "reader",
-   "salt": "QX/5xZT4CUwS2vMu2A5Hyg==",
-   "iv": "VNDUEn/2iIv2w3m5",
-   "ct": "CbfGntBmM1R3O3/eWVgFNImEqGW9KyQg1S2l9Egy"
+   "salt": "YhHncZSBVG+pgXYK/Kd4/w==",
+   "iv": "4eGvi8iBeMwQmRxk",
+   "ct": "F1IUDx9/MNHHSDGsKqbm6Yw64EQ0AL+Oq3diHuE13fH8+j//9eIzo9QHP+qNkkfvjYWODiyFuGaNTIaTmLC2/lTXryZEemaiGnG4rPjrvFVJ9cajq2q9AzEspQI="
   },
   {
    "id": "reader06",
    "name": "Reader 06",
    "role": "reader",
-   "salt": "1Ak2RZ+5ysT5ujmujtHEJg==",
-   "iv": "2N+utRBtyMinK+MO",
-   "ct": "C6jDIWQpHl2aSwRpyZDwCOcNYLjA4QLj7OdK7bMz"
+   "salt": "xfsyv6yHPaLuuPqHfYDr7A==",
+   "iv": "gxNr98jV/yBheLNY",
+   "ct": "P7QzHYAFs2+1ycctJkbhSsgeu364AejYzgeHzCd8iKdROgIDsZUFgFmscLFGxbBfiQ9uVVQSS3omenpBJgN2IbpLWq9JuSS0Q042X5/mdbKDadofsad4G191Vj0="
   }
  ]
 }
