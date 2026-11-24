@@ -1,17 +1,57 @@
 {
   "product": "VibePACS",
   "institution": "Lindenhöhe-Klinikum",
-  "department": { "de": "Institut für Diagnostische und Interventionelle Radiologie", "en": "Department of Diagnostic and Interventional Radiology" },
+  "department": {
+    "de": "Institut für Diagnostische und Interventionelle Radiologie",
+    "en": "Department of Diagnostic and Interventional Radiology"
+  },
   "fictitious": true,
   "accent": "#00805a",
   "accentText": "#4fd3a0",
   "ctPresets": [
-    { "de": "Weichteil", "en": "Soft tissue", "center": 40, "width": 400 },
-    { "de": "Lunge", "en": "Lung", "center": -600, "width": 1500 },
-    { "de": "Knochen", "en": "Bone", "center": 500, "width": 2000 },
-    { "de": "Leber", "en": "Liver", "center": 70, "width": 160 },
-    { "de": "Hirn", "en": "Brain", "center": 40, "width": 80 },
-    { "de": "Mediastinum", "en": "Mediastinum", "center": 50, "width": 350 }
+    {
+      "de": "Weichteil",
+      "en": "Soft tissue",
+      "center": 40,
+      "width": 400
+    },
+    {
+      "de": "Lunge",
+      "en": "Lung",
+      "center": -600,
+      "width": 1500
+    },
+    {
+      "de": "Knochen",
+      "en": "Bone",
+      "center": 500,
+      "width": 2000
+    },
+    {
+      "de": "Leber",
+      "en": "Liver",
+      "center": 70,
+      "width": 160
+    },
+    {
+      "de": "Hirn",
+      "en": "Brain",
+      "center": 40,
+      "width": 80
+    },
+    {
+      "de": "Mediastinum",
+      "en": "Mediastinum",
+      "center": 50,
+      "width": 350
+    }
   ],
-  "reportFooter": { "de": "Lindenhöhe-Klinikum (fiktive Einrichtung) · Forschungsprototyp, kein Medizinprodukt", "en": "Lindenhöhe-Klinikum (fictitious institution) · research prototype, not a medical device" }
+  "reportFooter": {
+    "de": "Lindenhöhe-Klinikum (fiktive Einrichtung) · Forschungsprototyp, kein Medizinprodukt",
+    "en": "Lindenhöhe-Klinikum (fictitious institution) · research prototype, not a medical device"
+  },
+  "demoLogin": {
+    "user": "demo",
+    "password": "vibepacs-demo"
+  }
 }

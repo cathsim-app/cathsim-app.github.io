@@ -58,6 +58,14 @@
    "salt": "xfsyv6yHPaLuuPqHfYDr7A==",
    "iv": "gxNr98jV/yBheLNY",
    "ct": "P7QzHYAFs2+1ycctJkbhSsgeu364AejYzgeHzCd8iKdROgIDsZUFgFmscLFGxbBfiQ9uVVQSS3omenpBJgN2IbpLWq9JuSS0Q042X5/mdbKDadofsad4G191Vj0="
+  },
+  {
+   "id": "demo",
+   "name": "Demo (public)",
+   "role": "reader",
+   "salt": "6sokCPHC/A9ff9L1Thh4Eg==",
+   "iv": "LfuAZTvwvOw2mpaI",
+   "ct": "izYs+NcZGkI8b0RdZW8tQqCgcnA17w0J6HliuBw3"
   }
  ]
 }

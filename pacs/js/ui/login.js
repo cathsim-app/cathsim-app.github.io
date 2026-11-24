@@ -17,6 +17,7 @@ export function loginScreen(root, nav, rerender) {
   } },
     h('div.logo', h('span.logo-mark', '◧'), h('div', h('h1', getSite().product), getSite().institution ? h('p.inst', getSite().institution, h('br'), loc(getSite().department)) : null, h('p', T('Vollständig KI-generiertes, browserbasiertes PACS – Machbarkeitsstudie', 'Entirely AI-generated, browser-based PACS – feasibility study')))),
     user, pass, err, submit,
+    getSite().demoLogin ? h('p.small.demo', T('Öffentlicher Demo-Zugang: ', 'Public demo account: '), h('b', getSite().demoLogin.user), ' / ', h('b', getSite().demoLogin.password), T(' (ohne zentrale Speicherung)', ' (nothing is stored centrally)')) : null,
     getSite().fictitious ? h('p.muted.small', T('Die genannte Einrichtung ist fiktiv und dient der Demonstration der Anpassbarkeit.', 'The institution named here is fictitious and demonstrates site customisation.')) : null,
     h('p.muted.small', T('Forschungsprototyp mit öffentlich verfügbaren, anonymisierten Bilddaten. Kein Medizinprodukt – nicht für die klinische Diagnostik. Bitte keine Patientendaten hochladen.', 'Research prototype with publicly available, de-identified image data. Not a medical device – not for clinical use. Do not upload patient data.')),
     h('button.link', { type: 'button', onclick: () => { setLang(getLang() === 'de' ? 'en' : 'de'); rerender(); } }, getLang() === 'de' ? 'English' : 'Deutsch'));

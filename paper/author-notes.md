@@ -14,9 +14,13 @@
 - **AI disclosure.** RSNA policy (as summarised by search results) requires naming the model or
   tool, version and manufacturer for AI-generated content, and AI tools cannot be authors. Fill
   in the bracket in Materials and Methods and add the disclosure the submission form asks for.
-- **Cost comparison.** No peer-reviewed PACS cost figure was found. Available numbers are
-  vendor or market-report statements (see supplement, section 4). Either find a citable source or
-  keep the sentence qualitative.
+- **Cost comparison.** No peer-reviewed PACS cost figure was found. Rough figures from a web
+  search (trade press and vendor guides, not verified at the source): enterprise imaging contracts
+  reported for single health systems of about USD 20-46 million (5-6 years) up to USD 227 million,
+  and SEK 1.6 billion over 10 years for Region Stockholm; vendor guides quote licences of USD
+  0.2-1 million or more, annual maintenance of 15-20% of the licence, and USD 0.50-3 per study
+  for hosted systems. The manuscript cites one trade-press report (reference 1) for the order of
+  magnitude only; replace it if a better source turns up.
 - **Data attribution.** CC BY requires attribution of four collections; with a 6-reference limit
   the citations are in the supplement and in the app. Confirm that the journal accepts this.
 
@@ -59,3 +63,11 @@ the institute's standard affiliation line and address; David Maintz as director 
 Andra-Iza Iuga's full name and ORCID 0000-0002-3694-0235 (University of Cologne publication
 server). Not found: degrees, ORCID iDs of the other authors, anything on Nedim Beste, and the
 corresponding author's e-mail address. Degrees marked [confirm] are assumptions.
+
+## Public demonstration
+
+https://cathsim-app.github.io/pacs/ with the public account `demo` / `vibepacs-demo` (shown on
+the login page; this account stores nothing centrally). The site is served from the `gh-pages`
+branch of cathsim-app/cathsim-app.github.io. Running `deploy_redirect.sh` from the simulator
+repository force-pushes that branch and would remove the demo; move the PACS to its own
+repository before the link is printed.
