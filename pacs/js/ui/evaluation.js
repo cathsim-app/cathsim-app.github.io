@@ -57,7 +57,7 @@ export function caseDebrief(study, hasPrior, done) {
     if (!open && !ev.submitted) toast(T('Alle Aufgaben bewertet – bitte noch den Abschlussfragebogen unter „Bewertung“ ausfüllen.', 'All tasks rated – please complete the final questionnaire under "Evaluation".'), 'ok', 7000);
     done();
   };
-  const close = modal(T('Bewertung zu diesem Fall', 'Evaluation of this case') + ` – ${pid}`, [
+  const close = modal(T('Bewertung zu diesem Fall', 'Evaluation of this case') + ` – ${study.patient.name}`, [
     h('p.muted', T('Bitte bewerten Sie kurz, was Sie in diesem Fall bearbeitet haben. Nicht Bearbeitetes können Sie offen lassen; es wird beim nächsten Schließen erneut angeboten.', 'Please rate what you worked on in this case. Leave untouched tasks open; they are offered again the next time you close the case.')),
     ...reg.map((c) => registrationCard(c, ev, 'd')), ...tasks.map((t) => taskCard(t, ev, true)),
     h('div.row', h('button.primary', { onclick: finish }, T('Speichern und weiter', 'Save and continue')))], { wide: true, onClose: finish });

@@ -301,5 +301,71 @@
    "s3": "s3://idc-open-data/0d765c7d-14c0-4e86-b745-261d175333ad/*",
    "ts": "Explicit VR Little Endian"
   }
+ ],
+ "cases": [
+  {
+   "patientId": "HCC_015",
+   "no": 1,
+   "region": {
+    "de": "Abdomen (Leber)",
+    "en": "Abdomen (liver)"
+   }
+  },
+  {
+   "patientId": "LIDC-IDRI-0365",
+   "no": 2,
+   "region": {
+    "de": "Thorax",
+    "en": "Chest"
+   }
+  },
+  {
+   "patientId": "ReMIND-017",
+   "no": 3,
+   "region": {
+    "de": "Schädel (Hirn)",
+    "en": "Head (brain)"
+   }
+  },
+  {
+   "patientId": "LIDC-IDRI-0219",
+   "no": 4,
+   "region": {
+    "de": "Thorax",
+    "en": "Chest"
+   }
+  },
+  {
+   "patientId": "112329",
+   "no": 5,
+   "region": {
+    "de": "Thorax",
+    "en": "Chest"
+   }
+  },
+  {
+   "patientId": "TCGA-B8-5165",
+   "no": 6,
+   "region": {
+    "de": "Abdomen (Nieren)",
+    "en": "Abdomen (kidneys)"
+   }
+  },
+  {
+   "patientId": "VS-MC-RC-016",
+   "no": 7,
+   "region": {
+    "de": "Schädel (Kleinhirnbrückenwinkel)",
+    "en": "Head (cerebellopontine angle)"
+   }
+  },
+  {
+   "patientId": "ProstateX-0180",
+   "no": 8,
+   "region": {
+    "de": "Becken (Prostata)",
+    "en": "Pelvis (prostate)"
+   }
+  }
  ]
 }

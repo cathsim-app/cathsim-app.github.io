@@ -14,6 +14,7 @@ export async function loadIndex() {
   const r = await fetch('data/index.json', { cache: 'no-cache' });
   if (!r.ok) throw new Error('Study index not available');
   index = await r.json();
+  for (const st of index.studies) if (st.caseNo) { st.patient.originalName = st.patient.name; st.patient.name = `Patient ${st.caseNo}`; }
   await restoreLocal();
   return index;
 }
