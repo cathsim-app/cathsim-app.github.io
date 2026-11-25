@@ -4,13 +4,14 @@ import { T, h, toast, modal, download, fmtDate, fmtNum, dot, clamp } from '../ut
 import { findStudy, priorsOf, stackOf, planeOf, pinSeries } from '../archive.js';
 import { Viewport, allAnnotations, measure, worldToImage } from '../viewer/viewport.js';
 import { buildVolume, mprSet } from '../viewer/volume.js';
+import { registerStacks } from '../viewer/register.js';
 import { thumbnail } from '../viewer/render.js';
 import { DICT, TRANSFER_SYNTAX } from '../dicom/dict.js';
-import { audit, countUse, toggleKeyImage, getKeyImages, getPrefs, setPref } from '../store.js';
+import { audit, countUse, toggleKeyImage, getKeyImages, getPrefs, setPref, recordTiming, noteRegistration } from '../store.js';
 import { icon } from '../icons.js';
 import { getSite, loc } from '../site.js';
 import { reportPanel } from './report.js';
-import { taskPanel } from './evaluation.js';
+import { taskPanel, caseDebrief } from './evaluation.js';
 
 const CT_PRESETS = () => (getSite().ctPresets?.length ? getSite().ctPresets.slice(0, 9).map((p) => [loc(p), Number(p.center), Number(p.width)]) : [
   [T('Weichteil', 'Soft tissue'), 40, 400], [T('Lunge', 'Lung'), -600, 1500], [T('Knochen', 'Bone'), 500, 2000],
@@ -92,6 +93,7 @@ export function viewerScreen(root, studyUid, params, nav) {
     const vp = viewports[i];
     if (!vp) return;
     if (state.mpr) exitMpr(false);
+    if (state.registration && ![viewports[i]?.set?.uid].every((u) => u !== state.registration.a && u !== state.registration.b)) state.registration = null;
     const stack = stackOf(st, se);
     countUse('series.open');
     await vp.load(stack, index);
@@ -171,14 +173,22 @@ export function viewerScreen(root, studyUid, params, nav) {
         const align = dot(pa.normal, po.normal);
         if (Math.abs(align) < 0.8) continue;
         const sameFor = vp.set.series.frameOfReference && vp.set.series.frameOfReference === o.set.series.frameOfReference;
+        const reg = state.registration;
         if (sameFor) scrollToPos(o, dot(vp.frame.ipp, po.normal));
+        else if (reg && reg.a === vp.set.uid && reg.b === o.set.uid) { const k = reg.aToB(vp.index); if (k !== o.index) o.show(k, true); }
+        else if (reg && reg.b === vp.set.uid && reg.a === o.set.uid) { const k = reg.bToA(vp.index); if (k !== o.index) o.show(k, true); }
         else if (vp._anchor !== null && o._anchor !== null && vp._anchor !== undefined) scrollToPos(o, o._anchor + (pa.pos - vp._anchor) * Math.sign(align));
       }
     }
     if (state.refLines) viewports.forEach((o) => { if (o !== vp) o.draw(); });
   }
-  function setSync(on) {
+  function setSync(on, manual = true) {
     state.sync = on;
+    if (on && manual && state.registration) {
+      // The reader realigned the images by hand: the manual anchor replaces the automatic result.
+      noteRegistration(state.registration.pair, { corrected: true });
+      state.registration = null; countUse('registration.manual');
+    }
     if (on) { anchorSync(); viewports.forEach((v) => { v._anchorIndex = v.index; }); countUse('sync'); }
     renderToolbar();
   }
@@ -245,15 +255,51 @@ export function viewerScreen(root, studyUid, params, nav) {
     if (state.mpr) exitMpr(false);
     const cur = viewports[state.active]?.set?.study === study ? viewports[state.active].set.series : study.series[study.series.length - 1];
     const match = prior.series.find((s) => s.description === cur.description) || prior.series.find((s) => s.modality === cur.modality) || prior.series[0];
+    const keepIndex = viewports[state.active]?.set?.series === cur ? viewports[state.active].index : null;
     setLayout(1, 2, false);
-    const frac = viewports[0].set ? viewports[0].index / Math.max(1, viewports[0].set.length - 1) : 0.5;
-    await loadSeries(0, study, cur);
-    await loadSeries(1, prior, match, Math.round(frac * (match.instances.length - 1)));
-    viewports[1].show(Math.round(viewports[0].index / Math.max(1, viewports[0].set.length - 1) * (viewports[1].set.length - 1)), true);
+    state.sync = false; state.registration = null;
+    await loadSeries(0, study, cur, keepIndex);
+    await loadSeries(1, prior, match);
     setActive(0); markActive();
     countUse('compare'); audit('study.compare', { studyUid, prior: prior.uid });
-    setTimeout(() => setSync(true), 300);
-    toast(T('Vergleich mit Voruntersuchung vom ', 'Comparison with prior study of ') + fmtDate(prior.date) + T(' – synchrones Blättern aktiv. Zum Angleichen Sync aus, Schichten einstellen, Sync an.', ' – synchronised scrolling on. To realign: sync off, match slices, sync on.'), 'info', 7000);
+    const [a, b] = viewports;
+    status.textContent = T('Registriere Voruntersuchung …', 'Registering prior study …');
+    let reg = { ok: false };
+    try {
+      const [fa, fb] = await Promise.all([a.set.loadAll(), b.set.loadAll()]);
+      if (a.set.series !== cur || b.set.series !== match) { status.textContent = ''; return; }
+      const t0 = performance.now();
+      reg = registerStacks(fa, fb);
+      recordTiming('registration', performance.now() - t0, { ok: reg.ok, score: reg.score ?? null });
+    } catch { /* fall through to manual alignment */ }
+    status.textContent = '';
+    const pair = `${study.patient.id}:${study.date}/${prior.date}`;
+    noteRegistration(pair, { auto: reg.ok, offset: reg.ok ? Math.round(reg.offset) : null, score: reg.ok ? Number(reg.score.toFixed(3)) : null, corrected: false });
+    if (reg.ok) {
+      state.registration = { ...reg, a: a.set.uid, b: b.set.uid, pair };
+      state.sync = true;
+      const zA = reg.zOfA.get(a.index);
+      await b.show(reg.aToB(a.index), true);
+      // Same magnification and in-plane position in both viewports.
+      setTimeout(() => {
+        if (!a.frame || !b.frame || state.registration?.pair !== pair) return;
+        b.view.zoom = a.fitScale() * a.view.zoom / b.fitScale();
+        const c = reg.centroid(zA);
+        if (c.a.x !== null && c.b.x !== null) {
+          a._m = a.matrix(); b._m = b.matrix();
+          const pa = a.toCanvas(c.a), pb = b.toCanvas(c.b);
+          b.view.panX += (pa.x - a.canvas.width / 2) - (pb.x - b.canvas.width / 2);
+          b.view.panY += (pa.y - a.canvas.height / 2) - (pb.y - b.canvas.height / 2);
+        }
+        b.draw();
+      }, 250);
+      toast(T('Voruntersuchung vom ', 'Prior study of ') + fmtDate(prior.date) + T(` automatisch registriert (Versatz ${Math.round(reg.offset)} mm, Übereinstimmung ${reg.score.toFixed(2)}). Synchrones Blättern aktiv. Korrektur: Sync aus, Schichten angleichen, Sync an.`, ` registered automatically (offset ${Math.round(reg.offset)} mm, agreement ${reg.score.toFixed(2)}). Synchronised scrolling is on. To correct: sync off, match slices, sync on.`), 'ok', 8000);
+    } else {
+      b.show(Math.round(a.index / Math.max(1, a.set.length - 1) * (b.set.length - 1)), true);
+      setSync(true, false);
+      toast(T('Automatische Registrierung nicht möglich – bitte Schichten manuell angleichen (Sync aus, einstellen, Sync an).', 'Automatic registration failed – please match slices manually (sync off, adjust, sync on).'), 'warn', 8000);
+    }
+    renderToolbar();
   }
 
   // ----- cine ------------------------------------------------------------------------
@@ -355,7 +401,8 @@ export function viewerScreen(root, studyUid, params, nav) {
       h('div.tb-group', layout,
         btn('MPR', T('Multiplanare Rekonstruktion (M)', 'Multiplanar reformation (M)'), () => (state.mpr ? exitMpr() : enterMpr()), !!state.mpr, !f || (!state.mpr && vp.set.length < 5)), slab,
         btn(T('Vergleich', 'Compare'), T('Mit Voruntersuchung vergleichen', 'Compare with prior study'), compare, false, !priors.length),
-        btn(icon('sync'), T('Synchron blättern', 'Synchronised scrolling'), () => setSync(!state.sync), state.sync, viewports.length < 2 || !!state.mpr),
+        btn(icon('sync'), state.registration ? T('Synchron blättern (automatisch registriert)', 'Synchronised scrolling (registered automatically)') : T('Synchron blättern', 'Synchronised scrolling'), () => setSync(!state.sync), state.sync, viewports.length < 2 || !!state.mpr),
+        state.registration ? h('span.reg', { title: T('Automatische Registrierung der Voruntersuchung', 'Automatic registration of the prior study') }, `REG ${state.registration.score.toFixed(2)}`) : null,
         btn(icon('reflines'), T('Referenzlinien', 'Reference lines'), () => { state.refLines = !state.refLines; viewports.forEach((x) => x.draw()); renderToolbar(); countUse('reflines'); }, state.refLines),
         btn(icon(state.cine ? 'pause' : 'play', true), T('Cine (Leertaste)', 'Cine (space)'), toggleCine, !!state.cine, !f || vp.set.length < 2)),
       h('div.tb-group', btn(icon('star', isKey), T('Schlüsselbild (K)', 'Key image (K)'), keyImage, isKey, !f || vp.set.kind !== 'stack'),
@@ -459,7 +506,7 @@ export function viewerScreen(root, studyUid, params, nav) {
   const p = study.patient;
   root.append(h('div.viewer',
     h('header.viewer-head',
-      h('button.back', { onclick: () => nav('#/worklist'), title: T('Zur Arbeitsliste', 'Back to worklist') }, '‹ ' + T('Arbeitsliste', 'Worklist')),
+      h('button.back', { onclick: () => caseDebrief(study, priors.some((p) => p.date <= study.date), () => nav('#/worklist')), title: T('Fall schließen und zur Arbeitsliste', 'Close case and return to worklist') }, '‹ ' + T('Arbeitsliste', 'Worklist')),
       h('div.patient', h('b', p.name), h('span', `ID ${p.id}`), h('span', [p.sex, p.age].filter(Boolean).join(' · ')),
         h('span', `${fmtDate(study.date)} · ${study.modalities.join('/')} · ${study.description || ''}`), h('span.muted', `${T('Auftrag', 'Acc.')} ${study.accession || '–'}`)),
       h('span.warn-chip', T('Nicht für die klinische Diagnostik', 'Not for clinical use'))),

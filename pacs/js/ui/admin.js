@@ -3,7 +3,8 @@
 import { T, h, toast, download, fmtDateTime, fmtNum } from '../util.js';
 import { sealAccount, randomPassword, uploadCredential, loadConfig, KDF_ITERATIONS, currentUser } from '../auth.js';
 import { fetchAllRemote, remoteConfigured, getAudit, getEvaluation } from '../store.js';
-import { TASKS, OVERALL, susScore } from '../protocol.js';
+import { TASKS, OVERALL, susScore, REGISTRATION_CASES, REGISTRATION_SCALE } from '../protocol.js';
+import { summarize, latestPerReader as latest } from '../stats.js';
 
 const median = (a) => { if (!a.length) return NaN; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN);
@@ -57,20 +58,18 @@ export function adminScreen(root, nav) {
     } catch (e) { toast(T('Abruf fehlgeschlagen: ', 'Fetch failed: ') + e.message, 'error'); }
     renderResults();
   }
-  function latestPerReader() {
-    const by = new Map();
-    for (const e of evaluations) { const prev = by.get(e.reader); if (!prev || prev.submitted < e.submitted) by.set(e.reader, e); }
-    return [...by.values()].sort((a, b) => a.reader.localeCompare(b.reader));
-  }
+  const latestPerReader = () => latest(evaluations);
   function csv(list) {
     const tasks = TASKS(), ov = OVERALL();
-    const header = ['reader', 'submitted', 'role', 'years', 'clinical_pacs', 'input', 'sus', ...Array.from({ length: 10 }, (_, i) => `sus${i + 1}`),
+    const header = ['reader', 'status', 'saved', 'submitted', 'role', 'years', 'clinical_pacs', 'input', 'sus', ...Array.from({ length: 10 }, (_, i) => `sus${i + 1}`),
       ...tasks.flatMap((t) => [`${t.id}_done`, `${t.id}_rating`, `${t.id}_comment`]), ...ov.map(([id]) => id), 'global', 'missing', 'bugs', 'comments',
+      ...REGISTRATION_CASES().flatMap((c) => [`reg_${c.id}`, `reg_${c.id}_comment`]), 'auto_registration',
       'series_load_median_ms', 'screen', 'user_agent'];
     const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-    const lines = list.map((e) => [e.reader, e.submitted, e.profile?.role, e.profile?.years, e.profile?.pacs, e.profile?.input, susScore(e.sus),
+    const lines = list.map((e) => [e.reader, e.submitted && !e.partial ? 'final' : 'partial', e.saved, e.submitted, e.profile?.role, e.profile?.years, e.profile?.pacs, e.profile?.input, susScore(e.sus),
       ...Array.from({ length: 10 }, (_, i) => e.sus?.[i]), ...tasks.flatMap((t) => [e.tasks?.[t.id]?.done, e.tasks?.[t.id]?.rating, e.tasks?.[t.id]?.comment]),
       ...ov.map(([id]) => e.overall?.[id]), e.overall?.global, e.overall?.missing, e.overall?.bugs, e.overall?.comments,
+      ...REGISTRATION_CASES().flatMap((c) => [e.registration?.[c.id]?.rating, e.registration?.[c.id]?.comment]), JSON.stringify(e.autoRegistration || {}),
       median((e.timings || []).filter((t) => t.name === 'series.load').map((t) => t.ms)), e.client?.screen, e.client?.ua].map(esc).join(','));
     return [header.join(','), ...lines].join('\n');
   }
@@ -91,11 +90,15 @@ export function adminScreen(root, nav) {
       h('table.wl', h('thead', h('tr', [T('Aufgabe', 'Task'), T('gelöst', 'completed'), T('mit Schwierigkeiten', 'with difficulty'), T('nicht lösbar', 'failed'), T('Bewertung Median (1–5)', 'Rating median (1–5)')].map((c) => h('th', c)))),
         h('tbody', TASKS().map((t) => { const a = list.map((e) => e.tasks?.[t.id] || {}); const n = (v) => a.filter((x) => x.done === v).length;
           return h('tr', h('td', t.title), h('td', n('yes')), h('td', n('partly')), h('td', n('no')), h('td', fmtNum(median(a.map((x) => x.rating).filter(Boolean)), 1))); }))),
+      h('h3', T('Automatische Registrierung der Voruntersuchungen', 'Automatic registration of prior studies')),
+      h('table.wl', h('thead', h('tr', [T('Fall', 'Case'), ...REGISTRATION_SCALE().map(([, l]) => l), T('automatisch gelungen', 'automatic success'), T('manuell korrigiert', 'corrected manually'), T('Übereinstimmung (Median)', 'Agreement (median)')].map((c) => h('th', c)))),
+        h('tbody', summarize(evaluations, { tasks: TASKS().map((t) => ({ id: t.id, label: t.title })), cases: REGISTRATION_CASES(), overall: OVERALL().map(([id]) => id), includePartial: true }).registration.map((r) =>
+          h('tr', h('td', r.label), h('td', r.counts.exact), h('td', r.counts.minor), h('td', r.counts.major), h('td', r.counts.failed), h('td', `${r.autoOk}/${r.autoRuns}`), h('td', r.corrected), h('td', fmtNum(r.score, 2)))))),
       h('h3', T('Reader', 'Readers')),
-      h('table.wl', h('thead', h('tr', ['ID', T('Position', 'Role'), T('Jahre', 'Years'), 'PACS', 'SUS', T('Gesamt', 'Overall'), T('Abgeschickt', 'Submitted')].map((c) => h('th', c)))),
-        h('tbody', list.map((e) => h('tr', h('td', e.reader), h('td', e.profile?.role || ''), h('td', e.profile?.years ?? ''), h('td', e.profile?.pacs || ''), h('td', fmtNum(susScore(e.sus) ?? NaN, 1)), h('td', e.overall?.global || ''), h('td', fmtDateTime(e.submitted)))))),
+      h('table.wl', h('thead', h('tr', ['ID', 'Status', T('Position', 'Role'), T('Jahre', 'Years'), 'PACS', 'SUS', T('Gesamt', 'Overall'), T('Stand', 'Last saved')].map((c) => h('th', c)))),
+        h('tbody', list.map((e) => h('tr', h('td', e.reader), h('td', h(`span.badge.${e.submitted && !e.partial ? 'final' : 'draft'}`, e.submitted && !e.partial ? T('abgeschlossen', 'final') : T('läuft', 'in progress'))), h('td', e.profile?.role || ''), h('td', e.profile?.years ?? ''), h('td', e.profile?.pacs || ''), h('td', fmtNum(susScore(e.sus) ?? NaN, 1)), h('td', e.overall?.global || ''), h('td', fmtDateTime(e.saved || e.submitted)))))),
       h('div.row', h('button', { disabled: !list.length, onclick: () => download('vibepacs-results.csv', csv(list), 'text/csv') }, 'CSV'),
-        h('button', { disabled: !list.length, onclick: () => download('vibepacs-results.json', JSON.stringify(list, null, 1)) }, 'JSON')));
+        h('button', { disabled: !list.length, onclick: () => download('vibepacs-results.json', JSON.stringify(list, null, 1)) }, T('JSON (für das Paper)', 'JSON (for the paper)'))));
   }
 
   const auditLog = getAudit().slice(-200).reverse();
@@ -104,7 +107,7 @@ export function adminScreen(root, nav) {
     h('section', h('h2', T('Ergebnisse der Reader-Studie', 'Reader study results')),
       h('div.row', h('button.primary', { disabled: !remoteConfigured(), onclick: loadRemote }, T('Vom Server laden', 'Load from server')),
         addFiles, h('button', { onclick: () => addFiles.click() }, T('Bewertungsdateien hinzufügen (.json)', 'Add evaluation files (.json)')),
-        h('button', { onclick: () => { const e = getEvaluation(); if (e.submitted) { evaluations.push(e); renderResults(); } else toast(T('Keine eigene Bewertung abgeschickt.', 'No own evaluation submitted.'), 'warn'); } }, T('Eigene Bewertung hinzufügen', 'Add own evaluation'))),
+        h('button', { onclick: () => { const e = getEvaluation(); evaluations.push({ schema: 'vibepacs-evaluation/2', reader: currentUser().id, saved: new Date().toISOString(), partial: !e.submitted, ...e }); renderResults(); } }, T('Eigene Bewertung hinzufügen', 'Add own evaluation'))),
       results),
     h('section', h('h2', T('Zugänge und Ergebnis-Server', 'Accounts and result server')),
       h('p.muted', T('Erzeugt die Datei config/access.json. Jeder Zugang ist ein mit dem Passwort verschlüsselter Umschlag (PBKDF2 + AES-GCM). Mit Server-Adresse und Studien-Secret (wie im Worker hinterlegt) erhält jeder Zugang ein eigenes Upload-Kennwort; ohne Secret läuft die Installation im lokalen Modus.', 'Creates config/access.json. Each account is an envelope encrypted with its password (PBKDF2 + AES-GCM). With the server address and the study secret (as stored in the worker) each account receives its own upload credential; without a secret the installation runs in local mode.')),

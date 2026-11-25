@@ -151,3 +151,4 @@ body > .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(
 
 .inst { color: var(--text); font-size: 12px; } p.inst { margin: 2px 0 4px; } small.inst { display: block; color: var(--muted); font-weight: 400; }
 .demo { color: var(--text); background: var(--panel2); border-radius: 6px; padding: 8px 10px; margin: 0; }
+.reg { font: 11px ui-monospace, monospace; color: var(--accent-text); border: 1px solid var(--line); border-radius: 4px; padding: 2px 5px; }

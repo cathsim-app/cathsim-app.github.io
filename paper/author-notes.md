@@ -30,12 +30,15 @@
   author and stored in OneDrive). The repository copy keeps a placeholder.
 - Effort and cost, from the session record: session created 13:17 UTC on 24 Nov 2026; first
   tested version committed 13:52 UTC (35 min); second request done 13:55–14:08 UTC (14 min).
-  Human input: two free-text messages and three multiple-choice answers. Usage was about USD 21
-  at 14:40 UTC for the whole session, which includes manuscript drafting and later revisions, so
+  Human input: two free-text messages and three multiple-choice answers. Usage was about USD 28
+  on 25 Nov 2026 for the whole session, which includes manuscript drafting and later revisions, so
   it overstates the cost of the software alone. The first author's reading and testing time is
   not included.
-- Fictitious ratings: every bracketed reader result and Figure 2 are invented
-  (`fictitious-results.json`). Regenerate Figure 2 from the real export.
+- Fictitious ratings: the current draft is built from `fictitious-evaluations.json` (five invented
+  readers). `node paper/tools/update-paper.mjs --endpoint <result server>` (study secret in
+  `VIBEPACS_SECRET`) or `--files <export.json>` replaces them with the collected data, removes the
+  warning and the brackets, and redraws Figure 2. Two bracketed phrases stay manual: the
+  interpretation in the summary/discussion and the functions readers missed.
 - Ethics statement and consent wording (reader study without patient data; ask the local IRB
   whether a waiver/exemption applies).
 - Reader numbers and all bracketed results: Admin page → load results → CSV.

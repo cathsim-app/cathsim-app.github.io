@@ -159,6 +159,12 @@ export class Viewport {
     return new DOMMatrix().translate(c.width / 2 + v.panX, c.height / 2 + v.panY).rotate(v.rot)
       .scale((v.flipH ? -1 : 1) * s * f.colSpacing, (v.flipV ? -1 : 1) * s * f.rowSpacing).translate(-f.cols / 2, -f.rows / 2);
   }
+  /** Device pixels per millimetre at zoom 1 (image fitted to the viewport). */
+  fitScale() {
+    const f = this.frame, c = this.canvas, swap = this.view.rot % 180 !== 0;
+    const wmm = f.cols * f.colSpacing, hmm = f.rows * f.rowSpacing;
+    return Math.min(c.width / (swap ? hmm : wmm), c.height / (swap ? wmm : hmm));
+  }
   toCanvas(p, m = this._m) { const q = m.transformPoint(new DOMPoint(p.x, p.y)); return { x: q.x, y: q.y }; }
   toImage(p) { const q = this._m.inverse().transformPoint(new DOMPoint(p.x, p.y)); return { x: q.x, y: q.y }; }
   eventPoint(e) {
