@@ -7,57 +7,49 @@
    "id": "admin",
    "name": "Studienleitung",
    "role": "admin",
-   "salt": "QIpqeHaO4dYUlICTt8Lf4g==",
-   "iv": "CfMZ0gcYHDudsIU/",
-   "ct": "nwLDynq7CDrIRSslGZTPzFEaNwXlbTbLa+7f3YOOGlv4HvhRTy3T0k/90Hg3TnJjsqczPZIZ97Hl4JvnsYtcN/IToFVUB2QPpn6f7yQURzu9AjtlMtqqetU9BxY="
+   "salt": "Yb7/+Xu/OWh9WRl3aO15qA==",
+   "iv": "gcKeBNqhrpa6ZiE3",
+   "ct": "AOzH0G7jpusabJjlxZNIjnhoS7EM7/GR5ChbTJVSmdVV4lkowecqQkSNPb7WV/uJeNCYw2P/rdKjfRfzW7yIRXAuuduI2dpy0wbRenTQNRP7ZjgONsYsChQde8A="
   },
   {
-   "id": "reader01",
-   "name": "Reader 01",
+   "id": "rater1",
+   "name": "Rater 1",
    "role": "reader",
-   "salt": "8TahrS3c0fv9wvOOLg9IPw==",
-   "iv": "y7SQ9pPoFkVRhmkE",
-   "ct": "2wbmpau2pEX3ftSfMv8AkXUUZKTn4Ob4JpyjMpsb29wSXcSmPEDzr0r/L5T+CYAhaSEfVmtqwAlmXAvi+YJCRU7Jh3w7wXDH5Uov/hCxRfn/ksjwM4RL9HMynGY="
+   "salt": "zfk0Z16WLVEB9x7jgTVDkQ==",
+   "iv": "pAFbAhsrUh284eL2",
+   "ct": "RVNfaeMhZwlEUjZpP/1Km/1wYD6QuZHisTa20kjSAYXy2cUxeXtPzAuFDn9fg2TSvGkm88pMKFbZkk/bFHitj2eO6aeqJtolbcV900gASTiDnIfghRQjgD7jiBo="
   },
   {
-   "id": "reader02",
-   "name": "Reader 02",
+   "id": "rater2",
+   "name": "Rater 2",
    "role": "reader",
-   "salt": "ZBI+imRdDsv/N6XIg7yeOQ==",
-   "iv": "vD1Hp0iRZiS2N/+2",
-   "ct": "rAgmzXR78fxqxftiyw94oM7t7+50HsQMSgakJkI5Ldsr4cvnzgvacfGvRY4N40YJDhl/0oQpNvL+uYLSRRVMh3Zi8+tMzH8+NkImwBgRlC1uIDGDt3cXfUeVt+c="
+   "salt": "XQdSiitP9JMsDOF6mSMUpA==",
+   "iv": "ejQ9fDlflIpTj+ul",
+   "ct": "7MdFG9YegQFHIGNfNUD4DJkiK+rqIF4zeuqhj+7T8RhiRYGnJ152p+MC+xjWH/Ki11djOIFdy36l4J0paV+WAMI9WoaUjxpVTtGUgaicGCl0u8C2s9Et9MMBfBU="
   },
   {
-   "id": "reader03",
-   "name": "Reader 03",
+   "id": "rater3",
+   "name": "Rater 3",
    "role": "reader",
-   "salt": "GPfGQLSNO/NbHn6RqvIEiA==",
-   "iv": "ghRQIb+z/Chifo0h",
-   "ct": "pAujuu27kh/zGjjw1MtzCJuoJOksBLELe314PC5PTjC8hm4/iJamHSqmRmiK2oy4NpKd9z6cfjsojW9jWxJd0mZg5MrzJuVrngb+gkqU315QJcFsH0bWrUTDubU="
+   "salt": "t8QpEbyd0uUOFQCYD1/rgw==",
+   "iv": "PuIlekZqgiEUwFLb",
+   "ct": "isoI8EBuCqumrgSI83BuIuVd2kpEK/SF/61TcXiJ57SeZ0/n7P1EHk1AcUhy4r+nY3DHSK57fdc8C2T4MgyxXJLZdhuNWskVW1ZVaYBfQpuKABys/wDSSCVFVGo="
   },
   {
-   "id": "reader04",
-   "name": "Reader 04",
+   "id": "rater4",
+   "name": "Rater 4",
    "role": "reader",
-   "salt": "4dDVAsk3xlMsYCI0R0k6ww==",
-   "iv": "VuuzgvLLAvRHNIaI",
-   "ct": "HuKHLSK8znfENpu5CmweHaOTxiRKfslIzqGtpONEjnhQsX8aRL+zs5wt8do/gxZNh7AMu8cB1qldJfKb8K9W78v6L0OFAkQJFJUbh9BzPP1Ta6DLtLmnneSuNYI="
+   "salt": "FNAWTh0MmqMNN3UOqvOlwQ==",
+   "iv": "4IVO+MmkcnrXcI2B",
+   "ct": "3tKE/XQB4rEtJJgv+yzfx052YjW/sxsE/Jcgi0U7/9euO1gARg9/sszeFAewMpSw4r0N3nUtqGd7S+lvKyJkw3AzWpIOSKNUMFmHgpxGd37bGIe5QkSlFEHmaTU="
   },
   {
-   "id": "reader05",
-   "name": "Reader 05",
+   "id": "rater5",
+   "name": "Rater 5",
    "role": "reader",
-   "salt": "YhHncZSBVG+pgXYK/Kd4/w==",
-   "iv": "4eGvi8iBeMwQmRxk",
-   "ct": "F1IUDx9/MNHHSDGsKqbm6Yw64EQ0AL+Oq3diHuE13fH8+j//9eIzo9QHP+qNkkfvjYWODiyFuGaNTIaTmLC2/lTXryZEemaiGnG4rPjrvFVJ9cajq2q9AzEspQI="
-  },
-  {
-   "id": "reader06",
-   "name": "Reader 06",
-   "role": "reader",
-   "salt": "xfsyv6yHPaLuuPqHfYDr7A==",
-   "iv": "gxNr98jV/yBheLNY",
-   "ct": "P7QzHYAFs2+1ycctJkbhSsgeu364AejYzgeHzCd8iKdROgIDsZUFgFmscLFGxbBfiQ9uVVQSS3omenpBJgN2IbpLWq9JuSS0Q042X5/mdbKDadofsad4G191Vj0="
+   "salt": "vJ+9ogG0RozaDTu/963+8w==",
+   "iv": "I1fBIqJL9GYcchFE",
+   "ct": "JnYmDcPp/SBOKdtc03WZ/FxwsGorBjUA+qL9hg4rW9fj2sm2FJUkTJRQxJIZXoKqROgKeq+vOGoBG4qs3cwX6FpnqLg5w7/HaUNbjGfWQbGMQwVqn9F+oMfTqv4="
   },
   {
    "id": "demo",

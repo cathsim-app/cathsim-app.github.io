@@ -1,0 +1,5 @@
+{
+ "agentPlaceholder": "[agent, model, version, and manufacturer: see submission copy]",
+ "sessionCostUsd": "28",
+ "note": "sessionCostUsd is the usage of the whole generating session (software, revisions, manuscript drafts), read from the session record."
+}

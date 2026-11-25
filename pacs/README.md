@@ -17,13 +17,13 @@ that you are not permitted to process on your own computer.**
 | Viewer | 1×1 – 2×3 layouts, stack scroll, cine, window/level with CT presets, zoom, pan, rotate, flip, invert, radiological default orientation, orientation markers, scale bar, pixel/HU readout |
 | Measurements | Length, angle, elliptical/rectangular ROI (mean, SD, min, max, area), point value, labelled arrows; editable, persistent per user |
 | 3D | Orthogonal MPR with linked 3D crosshair, MIP/MinIP/average slabs, reference lines, cross-series cursor |
-| Comparison | Side-by-side prior study, synchronised scrolling (frame of reference or manual anchor) |
+| Comparison | Side-by-side prior study with automatic registration along the scan axis (profile and image correlation), matched magnification, synchronised scrolling, manual override |
 | Reporting | Structured report with templates, measurement insertion, draft/final workflow, prior reports, text export and print |
 | Other | Key images, DICOM attribute browser, PNG export, German/English UI, audit trail |
-| Study | Task checklist with per-task ratings, System Usability Scale, overall items, usage and load-time telemetry, admin summary with CSV export |
+| Study | Evaluation prompted automatically when a case is closed (tasks of that case, registration rating), System Usability Scale, overall items, usage and load-time telemetry, progress uploaded after every case, admin summary with CSV/JSON export |
 
 No framework, no build step, no third-party runtime dependency: plain ES modules
-(~3,600 lines). Everything runs in the browser; the only "server" is a static file host.
+(~3,800 lines). Everything runs in the browser; the only "server" is a static file host.
 
 ## Running
 
@@ -68,8 +68,11 @@ node tools/fetch-idc.mjs /tmp/raw && node tools/ingest.mjs /tmp/raw
 
 | Collection | Content used | Licence | DOI |
 |---|---|---|---|
-| LIDC-IDRI | chest CT (1 series), chest radiograph | CC BY 3.0 | 10.7937/K9/TCIA.2015.LO9QL9SX |
+| LIDC-IDRI | chest CT, chest radiograph | CC BY 3.0 | 10.7937/K9/TCIA.2015.LO9QL9SX |
 | HCC-TACE-Seg | liver CT, two time points | CC BY 4.0 | 10.7937/TCIA.5FNA-0924 |
+| NLST | low-dose chest CT, two annual rounds | CC BY 4.0 | 10.7937/TCIA.HMQ8-J677 |
+| TCGA-KIRC | renal CT, two time points | CC BY 3.0 | 10.7937/K9/TCIA.2016.V6PBVTDR |
+| Vestibular-Schwannoma-MC-RC | head MRI, two time points | CC BY 4.0 | 10.7937/HRZH-2N82 |
 | ReMIND | brain MRI (T2, FLAIR, post-contrast T1) | CC BY 4.0 | 10.7937/3RAG-D070 |
 | PROSTATEx | prostate MRI (T2 ×3, ADC, calculated b-value) | CC BY 3.0 | 10.7937/K9TCIA.2017.MURS5CL |
 
@@ -80,9 +83,12 @@ stored byte-identical to the source (only gzip-compressed for transport).
 
 `tests/compare.mjs` compares header values and decoded pixel data against checksums produced
 with an independent toolkit (pydicom). On 61 objects (demo series plus pydicom test files
-covering six transfer syntaxes) 58 were bit-identical; the three differences are a palette-colour
+covering six transfer syntaxes) 58 were bit-identical (run on the first six demo studies); the three differences are a palette-colour
 object (decoded to RGB here by design), uncompressed YBR 4:2:2 (not supported) and an
 odd-sized big-endian RGB object.
+
+`tests/register.test.mjs` runs the prior-study registration on the four demo pairs;
+`tests/worker.test.mjs` exercises the result server.
 
 ## Known limitations
 

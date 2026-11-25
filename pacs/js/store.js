@@ -80,6 +80,14 @@ export function recordTiming(name, ms, extra = {}) {
 }
 export const getTimings = () => read(ns('timings'), []);
 
+// Outcome of the automatic prior-study registration per patient pair (study data).
+export function noteRegistration(pair, patch) {
+  const r = read(ns('registration'), {});
+  r[pair] = { ...(r[pair] || {}), ...patch, t: new Date().toISOString() };
+  write(ns('registration'), r);
+}
+export const getRegistrations = () => read(ns('registration'), {});
+
 // --- reports -------------------------------------------------------------------
 export const getReports = () => read(ns('reports'), {});
 export const getReport = (studyUid) => getReports()[studyUid] || null;
@@ -111,12 +119,25 @@ export function toggleKeyImage(studyUid, seriesUid, sop, index) {
 }
 
 // --- evaluation ---------------------------------------------------------------------
-export const getEvaluation = () => read(ns('evaluation'), { profile: {}, tasks: {}, sus: {}, overall: {}, submitted: null });
+export const getEvaluation = () => ({ profile: {}, tasks: {}, sus: {}, overall: {}, registration: {}, submitted: null, ...read(ns('evaluation'), {}) });
 export const saveEvaluation = (e) => write(ns('evaluation'), e);
-export async function submitEvaluation(e) {
+
+function evaluationRecord(e, partial) {
   const u = currentUser();
-  const record = { ...e, schema: 'vibepacs-evaluation/1', reader: u.id, submitted: new Date().toISOString(),
-    usage: getUsage(), timings: getTimings(), client: { ua: navigator.userAgent, screen: `${screen.width}x${screen.height}`, dpr: devicePixelRatio, lang: navigator.language } };
+  return { ...e, schema: 'vibepacs-evaluation/2', reader: u.id, partial, saved: new Date().toISOString(),
+    usage: getUsage(), timings: getTimings(), autoRegistration: getRegistrations(),
+    client: { ua: navigator.userAgent, screen: `${screen.width}x${screen.height}`, dpr: devicePixelRatio, lang: navigator.language } };
+}
+
+/** Uploads the current state of the evaluation (called after every case). */
+export async function pushProgress() {
+  const e = getEvaluation();
+  if (e.submitted) return pushOrQueue('evaluation', evaluationRecord(e, false));
+  return pushOrQueue('evaluation', evaluationRecord(e, true));
+}
+
+export async function submitEvaluation(e) {
+  const record = evaluationRecord({ ...e, submitted: new Date().toISOString() }, false);
   saveEvaluation(record);
   audit('evaluation.submit');
   const remote = await pushOrQueue('evaluation', record);

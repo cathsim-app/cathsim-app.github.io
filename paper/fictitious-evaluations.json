@@ -1,0 +1,755 @@
+{
+ "_warning": "FICTITIOUS records in the real export format, for testing the pipeline and the layout. Not study data.",
+ "records": [
+  {
+   "schema": "vibepacs-evaluation/2",
+   "reader": "rater1",
+   "partial": false,
+   "saved": "2026-12-01T10:00:00Z",
+   "submitted": "2026-12-01T10:00:00Z",
+   "profile": {
+    "role": "resident",
+    "years": 2,
+    "pacs": "",
+    "input": "mouse"
+   },
+   "tasks": {
+    "worklist": {
+     "done": "yes",
+     "rating": 4
+    },
+    "scroll": {
+     "done": "yes",
+     "rating": 4
+    },
+    "window": {
+     "done": "partly",
+     "rating": 3
+    },
+    "zoompan": {
+     "done": "yes",
+     "rating": 3
+    },
+    "length": {
+     "done": "yes",
+     "rating": 4
+    },
+    "roi": {
+     "done": "yes",
+     "rating": 3
+    },
+    "mpr": {
+     "done": "no",
+     "rating": 1
+    },
+    "compare": {
+     "done": "yes",
+     "rating": 4
+    },
+    "multiseries": {
+     "done": "yes",
+     "rating": 2
+    },
+    "radiograph": {
+     "done": "yes",
+     "rating": 2
+    },
+    "keyimage": {
+     "done": "yes",
+     "rating": 3
+    },
+    "report": {
+     "done": "partly",
+     "rating": 2
+    },
+    "dicom": {
+     "done": "yes",
+     "rating": 4
+    }
+   },
+   "sus": {
+    "0": 4,
+    "1": 2,
+    "2": 4,
+    "3": 1,
+    "4": 4,
+    "5": 1,
+    "6": 5,
+    "7": 2,
+    "8": 4,
+    "9": 2
+   },
+   "overall": {
+    "imageQuality": 5,
+    "speed": 5,
+    "completeness": 4,
+    "reliability": 4,
+    "teaching": 5,
+    "clinical": 4,
+    "global": 3
+   },
+   "registration": {
+    "HCC_015": {
+     "rating": "exact"
+    },
+    "112329": {
+     "rating": "exact"
+    },
+    "TCGA-B8-5165": {
+     "rating": "minor"
+    },
+    "VS-MC-RC-016": {
+     "rating": "exact"
+    }
+   },
+   "autoRegistration": {
+    "HCC_015:x/y": {
+     "auto": true,
+     "score": 0.77,
+     "corrected": false
+    },
+    "112329:x/y": {
+     "auto": true,
+     "score": 0.81,
+     "corrected": false
+    },
+    "TCGA-B8-5165:x/y": {
+     "auto": true,
+     "score": 0.78,
+     "corrected": false
+    },
+    "VS-MC-RC-016:x/y": {
+     "auto": true,
+     "score": 0.8,
+     "corrected": false
+    }
+   },
+   "timings": [
+    {
+     "name": "series.load",
+     "ms": 649
+    },
+    {
+     "name": "series.load",
+     "ms": 741
+    },
+    {
+     "name": "series.load",
+     "ms": 1548
+    },
+    {
+     "name": "series.load",
+     "ms": 1356
+    },
+    {
+     "name": "series.load",
+     "ms": 837
+    },
+    {
+     "name": "series.load",
+     "ms": 1200
+    }
+   ]
+  },
+  {
+   "schema": "vibepacs-evaluation/2",
+   "reader": "rater2",
+   "partial": false,
+   "saved": "2026-12-02T10:00:00Z",
+   "submitted": "2026-12-02T10:00:00Z",
+   "profile": {
+    "role": "resident",
+    "years": 4,
+    "pacs": "",
+    "input": "mouse"
+   },
+   "tasks": {
+    "worklist": {
+     "done": "yes",
+     "rating": 5
+    },
+    "scroll": {
+     "done": "yes",
+     "rating": 3
+    },
+    "window": {
+     "done": "yes",
+     "rating": 3
+    },
+    "zoompan": {
+     "done": "yes",
+     "rating": 2
+    },
+    "length": {
+     "done": "yes",
+     "rating": 2
+    },
+    "roi": {
+     "done": "yes",
+     "rating": 2
+    },
+    "mpr": {
+     "done": "yes",
+     "rating": 1
+    },
+    "compare": {
+     "done": "yes",
+     "rating": 4
+    },
+    "multiseries": {
+     "done": "no",
+     "rating": 3
+    },
+    "radiograph": {
+     "done": "yes",
+     "rating": 3
+    },
+    "keyimage": {
+     "done": "yes",
+     "rating": 2
+    },
+    "report": {
+     "done": "yes",
+     "rating": 2
+    },
+    "dicom": {
+     "done": "partly",
+     "rating": 4
+    }
+   },
+   "sus": {
+    "0": 4,
+    "1": 2,
+    "2": 4,
+    "3": 2,
+    "4": 4,
+    "5": 2,
+    "6": 4,
+    "7": 3,
+    "8": 4,
+    "9": 2
+   },
+   "overall": {
+    "imageQuality": 5,
+    "speed": 5,
+    "completeness": 3,
+    "reliability": 3,
+    "teaching": 5,
+    "clinical": 4,
+    "global": 3
+   },
+   "registration": {
+    "HCC_015": {
+     "rating": "exact"
+    },
+    "112329": {
+     "rating": "exact"
+    },
+    "TCGA-B8-5165": {
+     "rating": "minor"
+    },
+    "VS-MC-RC-016": {
+     "rating": "major"
+    }
+   },
+   "autoRegistration": {
+    "HCC_015:x/y": {
+     "auto": true,
+     "score": 0.73,
+     "corrected": false
+    },
+    "112329:x/y": {
+     "auto": true,
+     "score": 0.74,
+     "corrected": false
+    },
+    "TCGA-B8-5165:x/y": {
+     "auto": true,
+     "score": 0.75,
+     "corrected": false
+    },
+    "VS-MC-RC-016:x/y": {
+     "auto": true,
+     "score": 0.75,
+     "corrected": true
+    }
+   },
+   "timings": [
+    {
+     "name": "series.load",
+     "ms": 1493
+    },
+    {
+     "name": "series.load",
+     "ms": 873
+    },
+    {
+     "name": "series.load",
+     "ms": 1038
+    },
+    {
+     "name": "series.load",
+     "ms": 1077
+    },
+    {
+     "name": "series.load",
+     "ms": 508
+    },
+    {
+     "name": "series.load",
+     "ms": 798
+    }
+   ]
+  },
+  {
+   "schema": "vibepacs-evaluation/2",
+   "reader": "rater3",
+   "partial": false,
+   "saved": "2026-12-03T10:00:00Z",
+   "submitted": "2026-12-03T10:00:00Z",
+   "profile": {
+    "role": "board",
+    "years": 7,
+    "pacs": "",
+    "input": "mouse"
+   },
+   "tasks": {
+    "worklist": {
+     "done": "yes",
+     "rating": 3
+    },
+    "scroll": {
+     "done": "yes",
+     "rating": 4
+    },
+    "window": {
+     "done": "yes",
+     "rating": 3
+    },
+    "zoompan": {
+     "done": "yes",
+     "rating": 2
+    },
+    "length": {
+     "done": "yes",
+     "rating": 4
+    },
+    "roi": {
+     "done": "yes",
+     "rating": 4
+    },
+    "mpr": {
+     "done": "partly",
+     "rating": 2
+    },
+    "compare": {
+     "done": "partly",
+     "rating": 3
+    },
+    "multiseries": {
+     "done": "partly",
+     "rating": 3
+    },
+    "radiograph": {
+     "done": "yes",
+     "rating": 3
+    },
+    "keyimage": {
+     "done": "partly",
+     "rating": 3
+    },
+    "report": {
+     "done": "no",
+     "rating": 3
+    },
+    "dicom": {
+     "done": "yes",
+     "rating": 4
+    }
+   },
+   "sus": {
+    "0": 4,
+    "1": 4,
+    "2": 4,
+    "3": 2,
+    "4": 4,
+    "5": 2,
+    "6": 5,
+    "7": 2,
+    "8": 4,
+    "9": 3
+   },
+   "overall": {
+    "imageQuality": 5,
+    "speed": 5,
+    "completeness": 4,
+    "reliability": 4,
+    "teaching": 4,
+    "clinical": 3,
+    "global": 2
+   },
+   "registration": {
+    "HCC_015": {
+     "rating": "minor"
+    },
+    "112329": {
+     "rating": "minor"
+    },
+    "TCGA-B8-5165": {
+     "rating": "exact"
+    },
+    "VS-MC-RC-016": {
+     "rating": "exact"
+    }
+   },
+   "autoRegistration": {
+    "HCC_015:x/y": {
+     "auto": true,
+     "score": 0.81,
+     "corrected": false
+    },
+    "112329:x/y": {
+     "auto": true,
+     "score": 0.75,
+     "corrected": false
+    },
+    "TCGA-B8-5165:x/y": {
+     "auto": true,
+     "score": 0.91,
+     "corrected": false
+    },
+    "VS-MC-RC-016:x/y": {
+     "auto": true,
+     "score": 0.78,
+     "corrected": false
+    }
+   },
+   "timings": [
+    {
+     "name": "series.load",
+     "ms": 555
+    },
+    {
+     "name": "series.load",
+     "ms": 1581
+    },
+    {
+     "name": "series.load",
+     "ms": 1110
+    },
+    {
+     "name": "series.load",
+     "ms": 686
+    },
+    {
+     "name": "series.load",
+     "ms": 1034
+    },
+    {
+     "name": "series.load",
+     "ms": 1561
+    }
+   ]
+  },
+  {
+   "schema": "vibepacs-evaluation/2",
+   "reader": "rater4",
+   "partial": false,
+   "saved": "2026-12-04T10:00:00Z",
+   "submitted": "2026-12-04T10:00:00Z",
+   "profile": {
+    "role": "board",
+    "years": 9,
+    "pacs": "",
+    "input": "mouse"
+   },
+   "tasks": {
+    "worklist": {
+     "done": "yes",
+     "rating": 2
+    },
+    "scroll": {
+     "done": "yes",
+     "rating": 4
+    },
+    "window": {
+     "done": "yes",
+     "rating": 4
+    },
+    "zoompan": {
+     "done": "yes",
+     "rating": 3
+    },
+    "length": {
+     "done": "yes",
+     "rating": 3
+    },
+    "roi": {
+     "done": "yes",
+     "rating": 4
+    },
+    "mpr": {
+     "done": "yes",
+     "rating": 1
+    },
+    "compare": {
+     "done": "yes",
+     "rating": 4
+    },
+    "multiseries": {
+     "done": "no",
+     "rating": 4
+    },
+    "radiograph": {
+     "done": "yes",
+     "rating": 4
+    },
+    "keyimage": {
+     "done": "yes",
+     "rating": 3
+    },
+    "report": {
+     "done": "yes",
+     "rating": 3
+    },
+    "dicom": {
+     "done": "yes",
+     "rating": 3
+    }
+   },
+   "sus": {
+    "0": 5,
+    "1": 2,
+    "2": 4,
+    "3": 3,
+    "4": 4,
+    "5": 3,
+    "6": 3,
+    "7": 1,
+    "8": 4,
+    "9": 1
+   },
+   "overall": {
+    "imageQuality": 5,
+    "speed": 4,
+    "completeness": 2,
+    "reliability": 4,
+    "teaching": 4,
+    "clinical": 4,
+    "global": 3
+   },
+   "registration": {
+    "HCC_015": {
+     "rating": "minor"
+    },
+    "112329": {
+     "rating": "exact"
+    },
+    "TCGA-B8-5165": {
+     "rating": "exact"
+    },
+    "VS-MC-RC-016": {
+     "rating": "minor"
+    }
+   },
+   "autoRegistration": {
+    "HCC_015:x/y": {
+     "auto": true,
+     "score": 0.77,
+     "corrected": false
+    },
+    "112329:x/y": {
+     "auto": true,
+     "score": 0.88,
+     "corrected": false
+    },
+    "TCGA-B8-5165:x/y": {
+     "auto": true,
+     "score": 0.91,
+     "corrected": false
+    },
+    "VS-MC-RC-016:x/y": {
+     "auto": true,
+     "score": 0.79,
+     "corrected": false
+    }
+   },
+   "timings": [
+    {
+     "name": "series.load",
+     "ms": 1322
+    },
+    {
+     "name": "series.load",
+     "ms": 673
+    },
+    {
+     "name": "series.load",
+     "ms": 825
+    },
+    {
+     "name": "series.load",
+     "ms": 848
+    },
+    {
+     "name": "series.load",
+     "ms": 760
+    },
+    {
+     "name": "series.load",
+     "ms": 556
+    }
+   ]
+  },
+  {
+   "schema": "vibepacs-evaluation/2",
+   "reader": "rater5",
+   "partial": false,
+   "saved": "2026-12-05T10:00:00Z",
+   "submitted": "2026-12-05T10:00:00Z",
+   "profile": {
+    "role": "senior",
+    "years": 15,
+    "pacs": "",
+    "input": "mouse"
+   },
+   "tasks": {
+    "worklist": {
+     "done": "yes",
+     "rating": 5
+    },
+    "scroll": {
+     "done": "yes",
+     "rating": 4
+    },
+    "window": {
+     "done": "yes",
+     "rating": 4
+    },
+    "zoompan": {
+     "done": "yes",
+     "rating": 1
+    },
+    "length": {
+     "done": "no",
+     "rating": 3
+    },
+    "roi": {
+     "done": "yes",
+     "rating": 3
+    },
+    "mpr": {
+     "done": "yes",
+     "rating": 1
+    },
+    "compare": {
+     "done": "yes",
+     "rating": 3
+    },
+    "multiseries": {
+     "done": "partly",
+     "rating": 4
+    },
+    "radiograph": {
+     "done": "yes",
+     "rating": 2
+    },
+    "keyimage": {
+     "done": "yes",
+     "rating": 3
+    },
+    "report": {
+     "done": "partly",
+     "rating": 3
+    },
+    "dicom": {
+     "done": "yes",
+     "rating": 3
+    }
+   },
+   "sus": {
+    "0": 4,
+    "1": 2,
+    "2": 5,
+    "3": 1,
+    "4": 3,
+    "5": 1,
+    "6": 5,
+    "7": 1,
+    "8": 4,
+    "9": 2
+   },
+   "overall": {
+    "imageQuality": 5,
+    "speed": 4,
+    "completeness": 2,
+    "reliability": 3,
+    "teaching": 4,
+    "clinical": 3,
+    "global": 3
+   },
+   "registration": {
+    "HCC_015": {
+     "rating": "exact"
+    },
+    "112329": {
+     "rating": "exact"
+    },
+    "TCGA-B8-5165": {
+     "rating": "exact"
+    },
+    "VS-MC-RC-016": {
+     "rating": "exact"
+    }
+   },
+   "autoRegistration": {
+    "HCC_015:x/y": {
+     "auto": true,
+     "score": 0.82,
+     "corrected": false
+    },
+    "112329:x/y": {
+     "auto": true,
+     "score": 0.81,
+     "corrected": false
+    },
+    "TCGA-B8-5165:x/y": {
+     "auto": true,
+     "score": 0.87,
+     "corrected": false
+    },
+    "VS-MC-RC-016:x/y": {
+     "auto": true,
+     "score": 0.89,
+     "corrected": false
+    }
+   },
+   "timings": [
+    {
+     "name": "series.load",
+     "ms": 616
+    },
+    {
+     "name": "series.load",
+     "ms": 1008
+    },
+    {
+     "name": "series.load",
+     "ms": 891
+    },
+    {
+     "name": "series.load",
+     "ms": 1067
+    },
+    {
+     "name": "series.load",
+     "ms": 586
+    },
+    {
+     "name": "series.load",
+     "ms": 700
+    }
+   ]
+  }
+ ]
+}

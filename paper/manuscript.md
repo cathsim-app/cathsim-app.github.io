@@ -20,9 +20,10 @@ radiologists rated it [equivalent to their clinical PACS for everyday viewing].
 **Demonstration and code:** https://cathsim-app.github.io/pacs/ (user `demo`, password
 `vibepacs-demo`); source code in the same repository.
 
+
 > **FICTITIOUS RATINGS.** All reader results in this draft (values in [square brackets] in the
-> Results, and Figure 2) are invented to show the layout. They are not data and must be replaced
-> with the export from the study before anyone outside the author group sees this text.
+> Methods and Results, and Figure 2) are invented to show the layout. They are not data. This
+> notice and the brackets disappear when the manuscript is rebuilt from the collected ratings.
 
 ## Introduction
 
@@ -36,41 +37,40 @@ read on it?
 
 ## Materials and Methods
 
-This feasibility study used only public, de-identified images; [institutional review
-board statement]. Readers provided [informed consent].
+This feasibility study used only public, de-identified images; [institutional review board
+statement]. Readers provided [informed consent].
 
 **System generation.** In November 2026, one radiologist instructed an LLM coding agent
-([agent, model, version, and manufacturer: see submission copy]) to build a complete PACS. The first request was one paragraph plus
-three multiple-choice answers; a second paragraph requested adaptation to a department and central storage of ratings. No code was written or edited by
-humans, and existing viewer frameworks (3) were not used.  The serverless application (3600 lines of JavaScript, no third-party
-dependencies) comprises a DICOM parser and decoders, archive index, worklist, multi-viewport
-viewer, structured
-reporting, and encrypted accounts (Figure 1), hosted on free services. Six studies (631 DICOM
-objects; CT, MRI, radiography) from the Imaging Data Commons (4) served as test data. Decoded
-pixels were compared with an independent toolkit.
+([agent, model, version, and manufacturer: see submission copy]) to build a complete PACS. The first request was one paragraph plus three
+multiple-choice answers; later requests added departmental adaptation, central storage of
+ratings, and automatic registration of prior studies. No code was written or edited by humans,
+and existing viewer frameworks (3) were not used. The serverless application (3800 lines of
+JavaScript, no third-party dependencies) comprises a DICOM parser and decoders, archive index,
+worklist, multi-viewport viewer, structured reporting, and encrypted accounts (Figure 1), hosted
+on free services. Twelve studies (979 DICOM objects; CT, MRI, radiography), four with prior
+examinations, from the Imaging Data Commons (4) served as test data.
 
-**Reader evaluation.** [Eight] radiologists ([three] residents, [five] board certified; median
-experience, [6] years) performed 13 tasks. For each task, completion
-and a five-point comparison with the reader's clinical PACS (1 = much worse, 3 = equivalent,
-5 = much better) were recorded in the application. Readers completed the System Usability
-Scale (SUS; range, 0–100) (5) and six five-point agreement items. Data are reported
-descriptively.
+**Reader evaluation.** [5] radiologists ([2] residents, [3] board
+certified; median experience, [7] years) performed 13 tasks. After each case, the
+application recorded completion and a five-point comparison with the reader's clinical PACS
+(1 = much worse, 3 = equivalent, 5 = much better), and whether automatically registered priors
+showed the same anatomic level. Readers completed the System Usability Scale (SUS; range,
+0–100) (5) and six five-point agreement items. Data are reported descriptively.
 
 ## Results
 
-The first tested version existed 35 minutes after the initial request; departmental adaptation
-and central rating storage took 14 more minutes. Human input totaled two free-text messages and
-three multiple-choice answers; usage cost for the session, including manuscript drafting, was
-about $21. Decoded pixels were bit-identical to the reference toolkit in 58 of 61 test objects
-(95%).
+The first tested version existed 35 minutes after the initial request. Usage cost for the
+session, including manuscript drafting, was about $28. Decoded pixels were bit-identical
+to an independent toolkit in 58 of 61 test objects (95%).
 
-All [eight] readers completed the evaluation. Of [104] task attempts, [87] ([84]%) succeeded
-without problems, [14] ([13]%) with difficulty, and [three] ([3]%) failed. The median rating
-relative to the clinical PACS was [3] (IQR, [2–3]); basic viewing matched the clinical system,
-whereas multiplanar reformation, prior comparison, and reporting fell short (Figure 2). The mean
-SUS score was [74] ± [11]. [Seven] of [eight] readers considered image quality adequate for
-diagnostic viewing, and [five] could imagine clinical use given regulatory clearance. Readers
-most often missed [hanging protocols, volume rendering, and speech recognition].
+Of [65] task attempts, [51] ([78]%) succeeded without problems, [9]
+([14]%) with difficulty, and [5] ([8]%) failed. The median rating relative to
+the clinical PACS was [3] (IQR, [2–4]); ratings were lowest for
+[multiplanar reformation, zoom, pan, rotate, and reporting] (Figure 2). Automatic registration showed the same anatomic level in [13]
+of [20] reader assessments and deviated by at most one section in [6]. The
+mean SUS score was [77] ± [6]. [5] of [5] readers considered image
+quality adequate for diagnostic viewing, and [3] could imagine clinical use given
+regulatory clearance. Readers most often missed [functions from free-text answers].
 
 ## Discussion
 
@@ -112,10 +112,10 @@ compete.
 
 ![](figures/figure1.jpg)
 
-**Figure 1:** Screenshots of the AI-generated PACS. **(A)** Liver CT side by side with the prior
-examination; length and region-of-interest measurements are transferred to the structured
-report. **(B)** Multiplanar reformation of a chest CT with linked crosshair. Images: HCC-TACE-Seg
-and LIDC-IDRI collections, Imaging Data Commons.
+**Figure 1:** Screenshots of the AI-generated PACS. **(A)** Liver CT side by side with the
+automatically registered prior examination; length and region-of-interest measurements are
+transferred to the structured report. **(B)** Multiplanar reformation of a chest CT with linked
+crosshair. Images: HCC-TACE-Seg and LIDC-IDRI collections, Imaging Data Commons.
 
 ![](figures/figure2-ratings.png)
 
