@@ -6,9 +6,13 @@ import { currentUser, logout } from '../auth.js';
 import { TASKS } from '../protocol.js';
 import { getSite, loc } from '../site.js';
 
+const MODALITY = () => ({ CT: 'CT', MR: T('MRT', 'MRI'), DX: T('Röntgen', 'Radiography'), CR: T('Röntgen', 'Radiography'), US: T('Sonografie', 'Ultrasound'), MG: T('Mammografie', 'Mammography'), PT: 'PET', NM: T('Nuklearmedizin', 'Nuclear medicine'), XA: T('Angiografie', 'Angiography') });
+const modalityText = (s) => s.modalities.map((m) => MODALITY()[m] || m).join(', ');
+const regionText = (s) => loc(s.region) || '–';
+
 export function worklistScreen(root, nav, rerender) {
   const user = currentUser();
-  const f = { q: '', modality: '', status: '', sort: getPrefs().wlSort || 'date', dir: getPrefs().wlDir || -1 };
+  const f = { q: '', modality: '', status: '', sort: getPrefs().wlSort2 || 'no', dir: getPrefs().wlDir2 || 1 };
   const tbody = h('tbody');
   const count = h('span.muted');
   let selected = 0, rows = [];
@@ -16,28 +20,32 @@ export function worklistScreen(root, nav, rerender) {
   const statusOf = (s) => getReports()[s.uid]?.status || 'new';
   const statusLabel = { new: T('Unbefundet', 'Unread'), draft: T('Entwurf', 'Draft'), final: T('Freigegeben', 'Final') };
   const cols = [
-    ['status', T('Status', 'Status'), (s) => statusOf(s)], ['name', T('Patient', 'Patient'), (s) => s.patient.name],
-    ['pid', T('Patienten-ID', 'Patient ID'), (s) => s.patient.id], ['sex', T('G/Alter', 'Sex/age'), (s) => `${s.patient.sex || ''} ${s.patient.age || ''}`],
-    ['date', T('Datum', 'Date'), (s) => s.date + (s.time || '')], ['mod', T('Mod.', 'Mod.'), (s) => s.modalities.join('/')],
-    ['desc', T('Untersuchung', 'Study description'), (s) => s.description || ''], ['n', T('Serien/Bilder', 'Series/images'), (s) => s.series.reduce((a, r) => a + r.instances.length, 0)],
-    ['acc', T('Auftragsnr.', 'Accession'), (s) => s.accession || ''], ['src', T('Quelle', 'Source'), (s) => (s.local ? T('lokal', 'local') : s.collection || '')],
+    ['no', T('Nr.', 'No.'), (s) => (s.caseNo || 999) * 1e9 - Number(s.date || 0)], ['status', T('Status', 'Status'), (s) => statusOf(s)],
+    ['name', T('Patient', 'Patient'), (s) => (s.caseNo || 999) * 1e9 - Number(s.date || 0)],
+    ['mod', T('Modalität', 'Modality'), (s) => modalityText(s)], ['region', T('Körperregion', 'Body region'), (s) => regionText(s)],
+    ['date', T('Datum', 'Date'), (s) => s.date + (s.time || '')], ['desc', T('Untersuchung', 'Study description'), (s) => s.description || ''],
+    ['sex', T('G/Alter', 'Sex/age'), (s) => `${s.patient.sex || ''} ${s.patient.age || ''}`],
+    ['n', T('Serien/Bilder', 'Series/images'), (s) => s.series.reduce((a, r) => a + r.instances.length, 0)],
+    ['pid', T('Patienten-ID', 'Patient ID'), (s) => s.patient.id], ['src', T('Quelle', 'Source'), (s) => (s.local ? T('lokal', 'local') : s.collection || '')],
   ];
 
   function fill() {
     const q = f.q.trim().toLowerCase();
     const get = cols.find((c) => c[0] === f.sort)[2];
-    rows = allStudies().filter((s) => (!q || [s.patient.name, s.patient.id, s.description, s.accession, s.collection, s.modalities.join(' '), s.series.map((r) => r.description).join(' ')].join(' ').toLowerCase().includes(q))
+    rows = allStudies().filter((s) => (!q || [s.patient.name, s.patient.id, s.description, s.accession, s.collection, s.modalities.join(' '), modalityText(s), regionText(s), s.series.map((r) => r.description).join(' ')].join(' ').toLowerCase().includes(q))
       && (!f.modality || s.modalities.includes(f.modality)) && (!f.status || statusOf(s) === f.status))
       .sort((a, b) => { const x = get(a), y = get(b); return (typeof x === 'number' ? x - y : String(x).localeCompare(String(y))) * f.dir; });
     selected = Math.min(selected, Math.max(0, rows.length - 1));
     tbody.replaceChildren(...rows.map((s, i) => {
       const st = statusOf(s), nPrior = priorsOf(s).length;
       return h(`tr${i === selected ? '.sel' : ''}`, { onclick: () => { selected = i; mark(); }, ondblclick: () => open(s) },
-        h('td', h(`span.badge.${st}`, statusLabel[st])), h('td', h('b', s.patient.name)), h('td', s.patient.id), h('td', `${s.patient.sex || ''} ${s.patient.age || ''}`),
-        h('td', `${fmtDate(s.date)} ${fmtTime(s.time)}`), h('td', s.modalities.join('/')),
-        h('td', s.description || '–', nPrior ? h('span.chip', { title: T('Voruntersuchungen vorhanden', 'Prior studies available') }, `+${nPrior}`) : null),
-        h('td', `${s.series.length} / ${s.series.reduce((a, r) => a + r.instances.length, 0)}`), h('td', s.accession || '–'),
-        h('td', s.local ? T('lokal', 'local') : (s.collection || '')),
+        h('td.no', s.caseNo ?? '–'), h('td', h(`span.badge.${st}`, statusLabel[st])),
+        h('td', h('b', s.patient.name), nPrior ? h('span.chip', { title: T('Weitere Untersuchungen dieses Patienten', 'Other studies of this patient') }, s.date >= Math.max(...priorsOf(s).map((p) => p.date)) ? T('aktuell', 'current') : T('Voruntersuchung', 'prior')) : null),
+        h('td', h('span.mod', modalityText(s))), h('td', regionText(s)),
+        h('td', `${fmtDate(s.date)} ${fmtTime(s.time)}`), h('td', s.description || '–'),
+        h('td', `${s.patient.sex || ''} ${s.patient.age || ''}`),
+        h('td', `${s.series.length} / ${s.series.reduce((a, r) => a + r.instances.length, 0)}`), h('td.muted', s.patient.id),
+        h('td.muted', s.local ? T('lokal', 'local') : (s.collection || '')),
         h('td.actions', h('button', { onclick: (e) => { e.stopPropagation(); open(s); } }, T('Öffnen', 'Open')),
           s.local ? h('button.icon', { title: T('Lokale Untersuchung entfernen', 'Remove local study'), onclick: async (e) => { e.stopPropagation(); await removeLocalStudy(s.uid); fill(); } }, '✕') : null));
     }));
@@ -47,7 +55,7 @@ export function worklistScreen(root, nav, rerender) {
   const mark = () => [...tbody.children].forEach((tr, i) => tr.classList.toggle('sel', i === selected));
   const open = (s) => { countUse('worklist.open'); nav(`#/viewer/${s.uid}`); };
 
-  const head = h('tr', cols.map(([id, label]) => h('th', { onclick: () => { if (f.sort === id) f.dir = -f.dir; else { f.sort = id; f.dir = 1; } setPref('wlSort', f.sort); setPref('wlDir', f.dir); renderHead(); fill(); } }, label, h('span.sort', ''))), h('th', ''));
+  const head = h('tr', cols.map(([id, label]) => h('th', { onclick: () => { if (f.sort === id) f.dir = -f.dir; else { f.sort = id; f.dir = 1; } setPref('wlSort2', f.sort); setPref('wlDir2', f.dir); renderHead(); fill(); } }, label, h('span.sort', ''))), h('th', ''));
   function renderHead() { [...head.children].forEach((th, i) => { const s = th.querySelector('.sort'); if (s) s.textContent = cols[i]?.[0] === f.sort ? (f.dir > 0 ? ' ▲' : ' ▼') : ''; }); }
 
   const modalities = [...new Set(allStudies().flatMap((s) => s.modalities))].sort();
@@ -75,7 +83,7 @@ export function worklistScreen(root, nav, rerender) {
 
   const ev = getEvaluation();
   const nDone = TASKS().filter((t) => ev.tasks[t.id]?.done).length;
-  const search = h('input.search', { type: 'search', placeholder: T('Suche: Name, ID, Untersuchung, Auftragsnummer …  ( / )', 'Search: name, ID, study, accession …  ( / )'), oninput: (e) => { f.q = e.target.value; fill(); } });
+  const search = h('input.search', { type: 'search', placeholder: T('Suche: Patient, Modalität, Region, Untersuchung …  ( / )', 'Search: patient, modality, region, study …  ( / )'), oninput: (e) => { f.q = e.target.value; fill(); } });
 
   function about() {
     const sources = [...new Map(allStudies().filter((s) => s.collection).map((s) => [s.collection, s])).values()];

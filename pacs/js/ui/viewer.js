@@ -508,7 +508,7 @@ export function viewerScreen(root, studyUid, params, nav) {
     h('header.viewer-head',
       h('button.back', { onclick: () => caseDebrief(study, priors.some((p) => p.date <= study.date), () => nav('#/worklist')), title: T('Fall schließen und zur Arbeitsliste', 'Close case and return to worklist') }, '‹ ' + T('Arbeitsliste', 'Worklist')),
       h('div.patient', h('b', p.name), h('span', `ID ${p.id}`), h('span', [p.sex, p.age].filter(Boolean).join(' · ')),
-        h('span', `${fmtDate(study.date)} · ${study.modalities.join('/')} · ${study.description || ''}`), h('span.muted', `${T('Auftrag', 'Acc.')} ${study.accession || '–'}`)),
+        h('span', `${fmtDate(study.date)} · ${study.modalities.join('/')} · ${loc(study.region) || study.description || ''}`), h('span.muted', `${T('Auftrag', 'Acc.')} ${study.accession || '–'}`)),
       h('span.warn-chip', T('Nicht für die klinische Diagnostik', 'Not for clinical use'))),
     toolbar,
     h('div.viewer-main', seriesPanel, grid, side)));

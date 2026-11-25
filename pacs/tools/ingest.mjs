@@ -18,6 +18,8 @@ if (!inDir) { console.error('usage: node ingest.mjs <input-dir> [<data-dir>]'); 
 let manifest = { series: [] };
 try { manifest = JSON.parse(await fs.readFile(path.join(here, 'demo-manifest.json'), 'utf8')); } catch { /* optional */ }
 const provenance = Object.fromEntries(manifest.series.map((s) => [s.seriesUid, s]));
+// Optional display numbering and body region per patient (manifest "cases").
+const caseOf = Object.fromEntries((manifest.cases || []).map((c) => [c.patientId, c]));
 
 async function* walk(dir) {
   for (const e of await fs.readdir(dir, { withFileTypes: true })) {
@@ -75,6 +77,10 @@ for (const [si, study] of list.entries()) {
   const sKey = 's' + String(si + 1).padStart(2, '0');
   const seriesList = [...study.series.values()].sort((a, b) => a.number - b.number);
   const outStudy = { ...study, key: sKey, modalities: [...new Set(seriesList.map((s) => s.modality))], series: [] };
+  const c = caseOf[study.patient.id];
+  outStudy.caseNo = c?.no ?? null;
+  const part = seriesList.map((x) => x.bodyPart).find(Boolean) || '';
+  outStudy.region = c?.region || (part ? { de: part, en: part } : null);
   if (!outStudy.accession) outStudy.accession = 'ACC' + String(1000 + si);
   for (const [ri, series] of seriesList.entries()) {
     const rKey = 'r' + String(ri + 1).padStart(2, '0');
@@ -98,4 +104,9 @@ for (const [si, study] of list.entries()) {
 await fs.writeFile(path.join(dataDir, 'index.json'), JSON.stringify(index));
 console.log(`${list.length} studies, ${nFiles} objects indexed (${skipped} skipped); ` +
   `${(bytesIn / 1e6).toFixed(1)} MB -> ${(bytesOut / 1e6).toFixed(1)} MB`);
+// Patients without a number in the manifest are numbered after the listed ones.
+let nextNo = Math.max(0, ...index.studies.map((s) => s.caseNo || 0));
+const assigned = {};
+for (const s of [...index.studies].reverse()) if (!s.caseNo) s.caseNo = assigned[s.patient.id] ||= ++nextNo;
+await fs.writeFile(path.join(dataDir, 'index.json'), JSON.stringify(index));
 for (const s of index.studies) console.log(` ${s.key} ${s.patient.id} ${s.date} ${s.modalities} "${s.description}" ${s.series.map((r) => r.instances.length).join('+')} images`);
